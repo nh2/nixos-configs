@@ -146,7 +146,16 @@ in
     powertop
     pv
     python3
-    qtpass
+    # TODO: Remove patch when https://github.com/IJHack/QtPass/pull/499 is merged and available.
+    (qtpass.overrideAttrs (old: {
+      patches = (old.patches or []) ++ [
+        (fetchpatch {
+          name = "qtpass-Dont-hardcode-pass-otp-usr-lib-path.patch";
+          url = "https://github.com/IJHack/QtPass/commit/2ca9f0ec5a8d709c97a2433c5cd814040c82d4f3.patch";
+          sha256 = "0ljlvqxvarrz2a4j71i66aflrxi84zirb6cg9kvygnvhvm1zbc7d";
+        })
+      ];
+    }))
     reptyr
     ripgrep
     screen
