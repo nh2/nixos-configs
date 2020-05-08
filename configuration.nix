@@ -33,9 +33,9 @@ let
     # Start PolicyKit agent manually
     # TODO: Remove with NixOS 20.03, see:
     #   https://github.com/NixOS/nixpkgs/commit/04e56aa016a19c8c8af1f02176bf230e02e6d6b8
-    ''
-      ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
-    ''
+    # ''
+    #   ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
+    # ''
   ];
   screenlockScriptName = "screenlock-script";
   screenlock-script = pkgs.writeScriptBin screenlockScriptName screenlockScriptText;
@@ -56,17 +56,13 @@ in
   nixpkgs.overlays = [
     (final: previous: {
       # TODO: Remove when https://github.com/rfjakob/earlyoom/pull/191 is merged and available.
-      # TODO: Switch `unstable` -> `previous` once we're on 20.09
       earlyoom = unstable.earlyoom.overrideAttrs (old: {
-        patches = (old.patches or []) ++ [
-          (final.fetchpatch {
-            name = "Fix-earlyoom-killing-processes-too-early-when-ZFS-is-in-use.patch";
-            # Pinned version of
-            #      https://github.com/rfjakob/earlyoom/compare/master...nh2:zfs-arcstats-support.patch
-            url = "https://github.com/rfjakob/earlyoom/compare/924f7b2f88dcfaca6d7403ec84890ef104da0e02...nh2:64feba56e427ada0729982a8bdc1f599ee66fd32.patch";
-            sha256 = "1d8nbg49mqdfkzyasbr023bhs20vzypdlj6i93m629rynbrs3yhf";
-          })
-        ];
+        src = final.fetchFromGitHub {
+          owner = "nh2";
+          repo = "earlyoom";
+          rev = "e0534b0ee26df23181ca326e1b7ed09520d7d4e5";
+          sha256 = "1av7q5ndm7xx2rpxaqxyaidf15fndc5br9z197gzwj23wxjhjc7a";
+        };
       });
     })
   ];
@@ -78,8 +74,6 @@ in
   boot.supportedFilesystems = [ "zfs" ];
   networking.hostId = "25252525";
   boot.zfs.requestEncryptionCredentials = true;
-
-  services.zfs.trim.enable = true; # default in NixOS >= 20.03
 
   # Enable exFAT support to use external storage (USB drives, SD cards etc).
   boot.extraModulePackages = [ config.boot.kernelPackages.exfat-nofuse ];
@@ -107,10 +101,10 @@ in
 
   # Select internationalisation properties.
   i18n = {
-    # consoleFont = "Lat2-Terminus16";
-    consoleKeyMap = "uk";
     # defaultLocale = "en_US.UTF-8";
   };
+  console.keyMap = "uk";
+
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
@@ -118,9 +112,9 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    unstable.cura # TODO: Remove with NixOS 20.03
-    unstable.eternal-terminal # TODO: Remove with NixOS 20.03
-    unstable.mumble # TODO: Remove with NixOS 20.03
+    cura
+    eternal-terminal
+    mumble
     (lib.hiPrio pkgs.parallel) # to take precedence over `parallel` from `moreutils`
     # (wineStaging.override { wineBuild = "wineWow"; }) # `wineWow` enables 64-bit support
     wineWowPackages.staging # `wineWow` enables 64-bit support
@@ -140,6 +134,7 @@ in
     gdb
     gimp
     git
+    # TODO: Replace by `delta` as soon as it's built on unstable
     gitAndTools.diff-so-fancy
     gitAndTools.hub
     glxinfo
@@ -196,16 +191,7 @@ in
     powertop
     pv
     python3
-    # TODO: Remove patch when https://github.com/IJHack/QtPass/pull/499 is merged and available.
-    (qtpass.overrideAttrs (old: {
-      patches = (old.patches or []) ++ [
-        (fetchpatch {
-          name = "qtpass-Dont-hardcode-pass-otp-usr-lib-path.patch";
-          url = "https://github.com/IJHack/QtPass/commit/2ca9f0ec5a8d709c97a2433c5cd814040c82d4f3.patch";
-          sha256 = "0ljlvqxvarrz2a4j71i66aflrxi84zirb6cg9kvygnvhvm1zbc7d";
-        })
-      ];
-    }))
+    qtpass
     reptyr
     ripgrep
     rofi
@@ -262,7 +248,7 @@ in
     gparted
     ntfs3g # for mounting NTFS USB drives
 
-    (callPackage ./marktext.nix {}) # TODO Remove this and ./marktext.nix when https://github.com/NixOS/nixpkgs/pull/77694 is merged, likely with NixOS 20.03
+    marktext
 
     unstable.slack
     libnotify # for `notify-send`
@@ -282,12 +268,11 @@ in
     man-pages # Linux development manual pages (2p syscalls / wrappers)
     glibcInfo # GNU Info manual of the GNU C Library
 
-    # TODO Remove unstable on 20.03
-    unstable.blugon # blue-light filter
+    blugon # blue-light filter
 
     inotify-tools # for inotifywait etc.
 
-    # unstable.ripcord
+    unstable.ripcord
 
     # Trying to have pulseaudio forbid Chromium to adjust volume gain,
     # but so far none of these have been effective.
@@ -387,7 +372,7 @@ in
     ${screenlockScriptText}
 
     # Screen notifications
-    ${pkgs.xfce.xfce4-notifyd}/bin/xfce4-notifyd &
+    ${pkgs.xfce.xfce4-notifyd}/lib/xfce4/notifyd/xfce4-notifyd &
   '';
 
   # Make polkit prompt show only 1 choice instead of both root and all `wheel` users.
@@ -397,7 +382,6 @@ in
   services.accounts-daemon.enable = true;
 
   services.xserver.desktopManager = {
-    default = "xfce";
     xterm.enable = false;
     # TODO: NixOS 20.03 adds a lot of new stuff for XFCE, see
     # https://github.com/NixOS/nixpkgs/commit/04e56aa016a19c8c8af1f02176bf230e02e6d6b8
@@ -408,7 +392,7 @@ in
       enableXfwm = false;
     };
   };
-  services.xserver.windowManager.default = "i3";
+  services.xserver.displayManager.defaultSession = "xfce+i3";
   services.xserver.windowManager.i3 = {
     enable = true;
     extraPackages = with pkgs; [
@@ -432,7 +416,8 @@ in
   # causes irrecoverable GUI freezes. earlyoom makes them short.
   services.earlyoom = {
     enable = true;
-    freeMemThreshold = 5; # percent
+    # freeMemThreshold = 5; # percent
+    freeMemThreshold = 10; # using a bit more because even https://github.com/rfjakob/earlyoom/pull/191 under-computes the amount of memory ZFS needs
     # See note below
     # freeSwapThreshold = 100; # percent
   };
