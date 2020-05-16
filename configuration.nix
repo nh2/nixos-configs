@@ -78,6 +78,10 @@ in
   # Enable exFAT support to use external storage (USB drives, SD cards etc).
   boot.extraModulePackages = [ config.boot.kernelPackages.exfat-nofuse ];
 
+  # For mounting many cameras.
+  # Need to set `users.users.alice.extraGroups = ["camera"];` for each user allowed.
+  programs.gphoto2.enable = true;
+
   # Enable fan control for the Thinkpad; allows spinning the fan to max with:
   #     echo level disengaged | sudo tee /proc/acpi/ibm/fan
   boot.extraModprobeConfig = ''
@@ -296,6 +300,8 @@ in
     #     ${pkgs.perl}/bin/perl -p -i -e 's/volume = merge/volume = 40/g' $out/share/pulseaudio/alsa-mixer/paths/*
     #   '';
     # }) {})
+
+    luminanceHDR
   ];
 
   # documentation.dev.enable = true;
@@ -361,7 +367,9 @@ in
   hardware.nvidia.optimus_prime.nvidiaBusId = "PCI:2:0:0";
   # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
   hardware.nvidia.optimus_prime.intelBusId = "PCI:0:2:0";
-
+  hardware.nvidia.modesetting.enable = true;
+  # # Completely disable the NVIDIA graphics card and use the integrated graphics processor instead.
+  # hardware.nvidiaOptimus.disable = true;
 
   # Enable the KDE Desktop Environment.
   # services.xserver.displayManager.sddm.enable = true;
@@ -454,9 +462,13 @@ in
       "audio" # See https://nixos.wiki/wiki/PulseAudio
       "networkmanager"
       "wheel" # Enable ‘sudo’ for the user.
+      "camera" # Enable `gphoto2` camera access.
     ];
     shell = pkgs.zsh;
   };
+
+  virtualisation.virtualbox.host.enable = true;
+  users.extraGroups.vboxusers.members = [ "niklas" ];
 
   # For testing NixOS updates without letting newer versions mess with normal
   # user's home directory contents.
