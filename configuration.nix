@@ -30,12 +30,6 @@ let
       xfconf-query --channel xfce4-session --create --property /general/LockCommand --set '${pkgs.xsecurelock}/bin/xsecurelock' --type string
       ${pkgs.xss-lock}/bin/xss-lock --transfer-sleep-lock -- ${pkgs.xsecurelock}/bin/xsecurelock &
     ''
-    # Start PolicyKit agent manually
-    # TODO: Remove with NixOS 20.03, see:
-    #   https://github.com/NixOS/nixpkgs/commit/04e56aa016a19c8c8af1f02176bf230e02e6d6b8
-    # ''
-    #   ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
-    # ''
   ];
   screenlockScriptName = "screenlock-script";
   screenlock-script = pkgs.writeScriptBin screenlockScriptName screenlockScriptText;
@@ -302,6 +296,8 @@ in
     # }) {})
 
     luminanceHDR
+
+    nix-top
   ];
 
   # documentation.dev.enable = true;
@@ -448,10 +444,6 @@ in
 
   # Yubikey
   services.udev.packages = [ pkgs.yubikey-personalization ];
-  # TODO: Remove with NixOS 20.03
-  services.udev.extraRules = ''
-    ATTRS{idVendor}=="1038", ATTRS{idProduct}=="12ad", ENV{PULSE_PROFILE_SET}="steelseries-arctis-usb-audio.conf"
-  '';
   services.pcscd.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
