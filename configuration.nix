@@ -339,9 +339,11 @@ in
   hardware.pulseaudio.enable = true;
   # Network sink streaming support
   hardware.pulseaudio.tcp.enable = true;
-  hardware.pulseaudio.zeroconf.discovery.enable = true;
+  # Note: As of writing (20.03), enabling zeroconf adds an `avahi` dep to the
+  #       pulseaudio dep so it will be compiled, not fetched from cache.
+  # hardware.pulseaudio.zeroconf.discovery.enable = true;
   # TODO: disable
-  hardware.pulseaudio.zeroconf.publish.enable = true;
+  # hardware.pulseaudio.zeroconf.publish.enable = true;
 
   # Steam needs this, see https://nixos.org/nixpkgs/manual/#sec-steam-play
   hardware.opengl.driSupport32Bit = true;
