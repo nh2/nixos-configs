@@ -204,6 +204,7 @@ in
     steam
     stress-ng
     sublime3
+    sublime-merge
     sysdig
     sysstat
     tcpdump
