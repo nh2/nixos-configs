@@ -300,14 +300,6 @@ in
 
     nix-top
 
-    # Currently not needed.
-    #(eclipses.eclipseWithPlugins {
-    #  eclipse = eclipses.eclipse-java;
-    #  jvmArgs = [ "-Xmx2048m" ];
-    #  # plugins = with eclipses.plugins;
-    #  #   [ cdt gnuarmeclipse ];
-    #})
-
     python3Packages.grip
     bup
 
