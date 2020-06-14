@@ -299,6 +299,19 @@ in
     luminanceHDR
 
     nix-top
+
+    # Currently not needed.
+    #(eclipses.eclipseWithPlugins {
+    #  eclipse = eclipses.eclipse-java;
+    #  jvmArgs = [ "-Xmx2048m" ];
+    #  # plugins = with eclipses.plugins;
+    #  #   [ cdt gnuarmeclipse ];
+    #})
+
+    python3Packages.grip
+    bup
+
+    barrier
   ];
 
   # documentation.dev.enable = true;
@@ -349,8 +362,12 @@ in
   # Steam needs this, see https://nixos.org/nixpkgs/manual/#sec-steam-play
   hardware.opengl.driSupport32Bit = true;
   hardware.pulseaudio.support32Bit = true;
-  # See https://www.reddit.com/r/DotA2/comments/e24l6q/a_game_file_appears_to_be_missing_or_corrupted/
-  hardware.opengl.extraPackages = with pkgs; [ libva ];
+  hardware.opengl.extraPackages = with pkgs; [
+    # See https://www.reddit.com/r/DotA2/comments/e24l6q/a_game_file_appears_to_be_missing_or_corrupted/
+    libva
+    # linuxPackages.nvidia_x11.out
+  ];
+  # hardware.opengl.extraPackages32 = [ pkgs.linuxPackages.nvidia_x11.lib32 ];
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -360,6 +377,7 @@ in
   # Enable touchpad support.
   services.xserver.libinput.enable = true;
 
+  # services.xserver.videoDrivers = [ "intel" "nvidia" ];
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia.optimus_prime.enable = true;
   # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
@@ -367,8 +385,12 @@ in
   # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
   hardware.nvidia.optimus_prime.intelBusId = "PCI:0:2:0";
   hardware.nvidia.modesetting.enable = true;
-  # # Completely disable the NVIDIA graphics card and use the integrated graphics processor instead.
+  # Completely disable the NVIDIA graphics card and use the integrated graphics processor instead.
   # hardware.nvidiaOptimus.disable = true;
+
+  # TODO: None of this works, revisit on 20.03 with PRIME offload mode:
+  # For headless use (e.g. CUDA and OpenCL):
+  # boot.kernelModules = [ "nvidia-uvm" ];
 
   # Enable the KDE Desktop Environment.
   # services.xserver.displayManager.sddm.enable = true;
