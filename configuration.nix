@@ -34,6 +34,14 @@ let
   screenlockScriptName = "screenlock-script";
   screenlock-script = pkgs.writeScriptBin screenlockScriptName screenlockScriptText;
 
+  nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export __VK_LAYER_NV_optimus=NVIDIA_only
+    exec -a "$0" "$@"
+  '';
+
   unstable = import <unstable> { config.allowUnfree = true; };
 in
 {
@@ -304,6 +312,8 @@ in
     bup
 
     barrier
+
+    nvidia-offload
   ];
 
   # documentation.dev.enable = true;
@@ -369,20 +379,23 @@ in
   # Enable touchpad support.
   services.xserver.libinput.enable = true;
 
-  # services.xserver.videoDrivers = [ "intel" "nvidia" ];
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia.optimus_prime.enable = true;
+  hardware.nvidia.prime.offload.enable = true; # offload mode (NVIDIA only used with `nvidia-offload` wrapper script)
+  # hardware.nvidia.prime.sync.enable = true; # sync mode (both Intel and NVIDIA on all the time; resume-from-suspend gives black screen)
   # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
-  hardware.nvidia.optimus_prime.nvidiaBusId = "PCI:2:0:0";
+  hardware.nvidia.prime.nvidiaBusId = "PCI:2:0:0";
   # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
-  hardware.nvidia.optimus_prime.intelBusId = "PCI:0:2:0";
-  hardware.nvidia.modesetting.enable = true;
-  # Completely disable the NVIDIA graphics card and use the integrated graphics processor instead.
-  # hardware.nvidiaOptimus.disable = true;
+  hardware.nvidia.prime.intelBusId = "PCI:0:2:0";
+  #hardware.nvidia.modesetting.enable = true;
+  hardware.nvidia.powerManagement.enable = true;
 
-  # TODO: None of this works, revisit on 20.03 with PRIME offload mode:
-  # For headless use (e.g. CUDA and OpenCL):
-  # boot.kernelModules = [ "nvidia-uvm" ];
+  # Workaround to make standby resume work with nvidia without getting a black screen because the display is off.
+  # See https://github.com/NixOS/nixpkgs/issues/73494
+  systemd.services.nvidia-resume.serviceConfig = {
+    # Requires `xhost +local:` in `sessionCommands` so that root can run X commands.
+    ExecStartPost = "${pkgs.xorg.xrandr}/bin/xrandr --display :0.0 --auto";
+    # ExecStartPost = "${pkgs.bash}/bin/bash -c 'set -x; ${pkgs.xorg.xauth}/bin/xauth add $(XAUTHORITY=/var/run/lightdm/root/:0 ${pkgs.xorg.xauth}/bin/xauth list); chvt 7; sleep 5; ${pkgs.xorg.xrandr}/bin/xrandr --display :0.0 --auto'";
+  };
 
   # Enable the KDE Desktop Environment.
   # services.xserver.displayManager.sddm.enable = true;
@@ -394,6 +407,10 @@ in
 
     # Screen notifications
     ${pkgs.xfce.xfce4-notifyd}/lib/xfce4/notifyd/xfce4-notifyd &
+
+    # Needed to fix resume on nvidia, see `nvidia-resume` section.
+    # TODO: This is suboptimal but I haven't figured out yet how to make root-commands work with XAUTHORITY
+    ${pkgs.xlibs.xhost}/bin/xhost +local:
   '';
 
   # Make polkit prompt show only 1 choice instead of both root and all `wheel` users.
