@@ -392,9 +392,8 @@ in
   # Workaround to make standby resume work with nvidia without getting a black screen because the display is off.
   # See https://github.com/NixOS/nixpkgs/issues/73494
   systemd.services.nvidia-resume.serviceConfig = {
-    # Requires `xhost +local:` in `sessionCommands` so that root can run X commands.
-    ExecStartPost = "${pkgs.xorg.xrandr}/bin/xrandr --display :0.0 --auto";
-    # ExecStartPost = "${pkgs.bash}/bin/bash -c 'set -x; ${pkgs.xorg.xauth}/bin/xauth add $(XAUTHORITY=/var/run/lightdm/root/:0 ${pkgs.xorg.xauth}/bin/xauth list); chvt 7; sleep 5; ${pkgs.xorg.xrandr}/bin/xrandr --display :0.0 --auto'";
+    # Note: This has lightdm hardcoded.
+    ExecStartPost = "${pkgs.bash}/bin/bash -c 'XAUTHORITY=/var/run/lightdm/root/:0 ${pkgs.xorg.xrandr}/bin/xrandr --display :0.0 --auto'";
   };
 
   # Enable the KDE Desktop Environment.
@@ -407,10 +406,6 @@ in
 
     # Screen notifications
     ${pkgs.xfce.xfce4-notifyd}/lib/xfce4/notifyd/xfce4-notifyd &
-
-    # Needed to fix resume on nvidia, see `nvidia-resume` section.
-    # TODO: This is suboptimal but I haven't figured out yet how to make root-commands work with XAUTHORITY
-    ${pkgs.xlibs.xhost}/bin/xhost +local:
   '';
 
   # Make polkit prompt show only 1 choice instead of both root and all `wheel` users.
