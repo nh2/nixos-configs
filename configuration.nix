@@ -367,9 +367,7 @@ in
   hardware.opengl.extraPackages = with pkgs; [
     # See https://www.reddit.com/r/DotA2/comments/e24l6q/a_game_file_appears_to_be_missing_or_corrupted/
     libva
-    # linuxPackages.nvidia_x11.out
   ];
-  # hardware.opengl.extraPackages32 = [ pkgs.linuxPackages.nvidia_x11.lib32 ];
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -380,14 +378,18 @@ in
   services.xserver.libinput.enable = true;
 
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia.prime.offload.enable = true; # offload mode (NVIDIA only used with `nvidia-offload` wrapper script)
-  # hardware.nvidia.prime.sync.enable = true; # sync mode (both Intel and NVIDIA on all the time; resume-from-suspend gives black screen)
-  # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
-  hardware.nvidia.prime.nvidiaBusId = "PCI:2:0:0";
-  # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
-  hardware.nvidia.prime.intelBusId = "PCI:0:2:0";
-  #hardware.nvidia.modesetting.enable = true;
+  hardware.nvidia.prime = {
+    offload.enable = true; # offload mode (NVIDIA only used with `nvidia-offload` wrapper script)
+    # sync.enable = true; # sync mode (both Intel and NVIDIA on all the time; resume-from-suspend gives black screen)
+
+    # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
+    nvidiaBusId = "PCI:2:0:0";
+
+    # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
+    intelBusId = "PCI:0:2:0";
+  };
   hardware.nvidia.powerManagement.enable = true;
+  # hardware.nvidia.modesetting.enable = true;
 
   # Workaround to make standby resume work with nvidia without getting a black screen because the display is off.
   # See https://github.com/NixOS/nixpkgs/issues/73494
