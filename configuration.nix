@@ -143,6 +143,7 @@ in
     git
     # TODO: Replace by `delta` as soon as it's built on unstable
     gitAndTools.diff-so-fancy
+    gitAndTools.git-absorb
     gitAndTools.hub
     glxinfo
     gnome-themes-standard # Provides theme in the XFCE theme switcher
@@ -315,6 +316,10 @@ in
     barrier
 
     nvidia-offload
+
+    virt-manager
+
+    zbar # QR code reader
   ];
 
   # documentation.dev.enable = true;
@@ -350,6 +355,9 @@ in
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  services.printing.drivers = [
+    pkgs.hplip
+  ];
 
   # Enable sound.
   sound.enable = true;
@@ -488,12 +496,15 @@ in
       "networkmanager"
       "wheel" # Enable ‘sudo’ for the user.
       "camera" # Enable `gphoto2` camera access.
+      "libvirtd" # manage VMs
     ];
     shell = pkgs.zsh;
   };
 
   virtualisation.virtualbox.host.enable = true;
   users.extraGroups.vboxusers.members = [ "niklas" ];
+
+  virtualisation.libvirtd.enable = true;
 
   # For testing NixOS updates without letting newer versions mess with normal
   # user's home directory contents.
