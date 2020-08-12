@@ -395,7 +395,7 @@ in
   # See https://github.com/NixOS/nixpkgs/issues/73494
   systemd.services.nvidia-resume.serviceConfig = {
     # Note: This has lightdm hardcoded.
-    ExecStartPost = "${pkgs.bash}/bin/bash -c 'XAUTHORITY=/var/run/lightdm/root/:0 ${pkgs.xorg.xrandr}/bin/xrandr --display :0.0 --auto'";
+    ExecStartPost = "${pkgs.bash}/bin/bash -c 'sleep 2 && XAUTHORITY=/var/run/lightdm/root/:0 ${pkgs.xorg.xrandr}/bin/xrandr --display :0.0 --auto'";
   };
 
   # Enable the KDE Desktop Environment.
