@@ -34,6 +34,7 @@ let
   screenlockScriptName = "screenlock-script";
   screenlock-script = pkgs.writeScriptBin screenlockScriptName screenlockScriptText;
 
+  # From https://nixos.wiki/wiki/Nvidia#offload_mode
   nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
     export __NV_PRIME_RENDER_OFFLOAD=1
     export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
@@ -378,6 +379,7 @@ in
   services.xserver.libinput.enable = true;
 
   services.xserver.videoDrivers = [ "nvidia" ];
+  # See https://nixos.wiki/wiki/Nvidia#offload_mode
   hardware.nvidia.prime = {
     offload.enable = true; # offload mode (NVIDIA only used with `nvidia-offload` wrapper script)
     # sync.enable = true; # sync mode (both Intel and NVIDIA on all the time; resume-from-suspend gives black screen)
