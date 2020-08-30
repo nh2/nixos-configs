@@ -383,8 +383,15 @@ in
 
   networking.networkmanager.enable = true;
 
-  services.avahi.enable = true;
-  services.avahi.nssmdns = true; # allows pinging *.local
+  services.avahi = {
+    enable = true;
+    nssmdns = true; # allows pinging *.local from this machine
+    publish = { # allows other machines to see this one
+      enable = true;
+      addresses = true;
+      workstation = true;
+    };
+  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
