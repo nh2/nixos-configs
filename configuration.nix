@@ -295,7 +295,7 @@ in
     zoom-us
 
     # apcupsd
-    rustc cargo binutils gcc gnumake openssl pkgconfig # Rust development (from https://nixos.org/nixpkgs/manual/#rust)
+    rustc cargo binutils gcc pkgconfig # Rust development (from https://nixos.org/nixpkgs/manual/#rust)
     cmake freetype # for Alacritty rust development
 
     audacity
