@@ -21,10 +21,6 @@ let
       '';
 
   screenlockScriptText = lib.concatStrings [
-    # Map Caps_Lock to Hyper_L
-    ''
-      ${custom-keyboard-layout}/bin/${customKeyboardLayoutScriptName}
-    ''
     # Make `xsecurelock` happen on `xflock4`, `loginctl lock-session`, and suspend/hibernate.
     ''
       xfconf-query --channel xfce4-session --create --property /general/LockCommand --set '${pkgs.xsecurelock}/bin/xsecurelock' --type string
@@ -457,6 +453,10 @@ in
 
   services.xserver.displayManager.lightdm.enable = true;
   services.xserver.displayManager.sessionCommands = ''
+    # Map Caps_Lock to Hyper_L
+    ${custom-keyboard-layout}/bin/${customKeyboardLayoutScriptName}
+
+    # Turn on screen locker
     ${screenlockScriptText}
 
     # Screen notifications
