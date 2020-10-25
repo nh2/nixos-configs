@@ -99,6 +99,8 @@ let
       '';
     });
 
+  # Needs a channel to be added via:
+  #     sudo nix-channel --add https://nixos.org/channels/nixos-unstable unstable
   unstable = import <unstable> { config.allowUnfree = true; };
 in
 {
