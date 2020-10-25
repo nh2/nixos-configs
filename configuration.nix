@@ -528,6 +528,13 @@ in
   services.udev.packages = [ pkgs.yubikey-personalization ];
   services.pcscd.enable = true;
 
+  # locate
+  services.locate = {
+    enable = true;
+    locate = pkgs.mlocate;
+    localuser = null; # required for mlocate, see https://github.com/NixOS/nixpkgs-channels/blob/42674051d12540d4a996504990c6ea3619505953/nixos/modules/misc/locate.nix#L130
+  };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.niklas = {
     isNormalUser = true;
@@ -538,6 +545,7 @@ in
       "wheel" # Enable ‘sudo’ for the user.
       "camera" # Enable `gphoto2` camera access.
       "libvirtd" # manage VMs
+      "mlocate" # allow using `locate`
     ];
     shell = pkgs.zsh;
   };
