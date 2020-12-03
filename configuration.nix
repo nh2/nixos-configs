@@ -173,6 +173,7 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    awscli2 # official `aws` CLI program
     cura
     eternal-terminal
     mumble
@@ -192,6 +193,7 @@ in
     file
     firefox
     fzf
+    gajim
     gdb
     gimp
     git
@@ -210,6 +212,7 @@ in
     gnome3.gnome-system-monitor
     gnome3.gnome-terminal
     gnome3.totem
+    gnome3.nautilus # xfce's `thunar` freezes the UI during lage MTP transfers, nautilus doesn't
     gnome3.vinagre
     gnumake
     gnupg
@@ -254,9 +257,11 @@ in
     pv
     python3
     qtpass
+    rclone
     reptyr
     ripgrep
     rofi
+    rxvt-unicode
     screen
     screen-message
     signal-desktop
@@ -275,6 +280,7 @@ in
     thunderbird
     traceroute
     unzip
+    usbutils # for lsusb
     vim
     vlc
     wget
