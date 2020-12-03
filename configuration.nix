@@ -113,7 +113,7 @@ in
   nixpkgs.overlays = [
     (final: previous: {
       # TODO: Remove when https://github.com/rfjakob/earlyoom/pull/191 is merged and available.
-      earlyoom = unstable.earlyoom.overrideAttrs (old: {
+      earlyoom = previous.earlyoom.overrideAttrs (old: {
         src = final.fetchFromGitHub {
           owner = "nh2";
           repo = "earlyoom";
