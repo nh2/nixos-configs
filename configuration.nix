@@ -393,8 +393,10 @@ in
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
-  services.printing.drivers = [
-    pkgs.hplip
+  services.printing.drivers = with pkgs; [
+    brlaser
+    gutenprint
+    hplip
   ];
 
   # Enable sound.
