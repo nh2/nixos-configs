@@ -39,62 +39,6 @@ let
     exec -a "$0" "$@"
   '';
 
-  # Trying to have pulseaudio forbid Chromium to adjust volume gain,
-  # but so far none of these have been effective.
-  # See https://askubuntu.com/questions/689209/how-to-disable-microphone-volume-auto-adjustment-in-cisco-webex
-  puseaudio_with_mic_boost_disabled =
-    let
-      constantVolume = 40;
-    in
-    pkgs.pulseaudio.overrideAttrs (old: {
-      # name = "pulseaudio-patched";
-      name = "${old.name}-patched-without-mic-boost";
-      # Instead of overriding some post-build action, which would require a
-      # pulseaudio rebuild, we override the entire `buildCommand` to produce
-      # its outputs by copying the original package's files (much faster).
-      buildCommand = ''
-        set -euo pipefail
-
-        ${# Copy original files, for each split-output (`out`, `dev` etc.).
-          lib.concatStringsSep "\n"
-            (map
-              (outputName:
-                ''
-                  echo "Copying output ${outputName}"
-                  set -x
-                  cp -a ${pkgs.pulseaudio.${outputName}} ''$${outputName}
-                  set +x
-                ''
-              )
-              old.outputs
-            )
-        }
-
-        # Replace:
-        #     [Element Capture]
-        #     switch = mute
-        #     volume = merge
-        # by:
-        #     [Element Capture]
-        #     switch = mute
-        #     volume = ${toString constantVolume}
-        # The target file `analog-input-internal-mic.conf` should be determined
-        # by the output of `pacmd list-sources` for the relevant microphone `index:`,
-        # which for my microphone is:
-        #     active port: <analog-input-internal-mic>
-        set -x
-        INFILE=$out/share/pulseaudio/alsa-mixer/paths/analog-input-internal-mic.conf
-        cat $INFILE \
-          | ${pkgs.python3}/bin/python -c 'import re,sys; print(re.sub(r"\[Element Capture\]\nswitch = mute\nvolume = merge", "[Element Capture]\nswitch = mute\nvolume = ${toString constantVolume}", sys.stdin.read()))' \
-          > tmp.conf
-        # Ensure file changed (something was replaced)
-        ! cmp tmp.conf $INFILE
-        chmod +w $out/share/pulseaudio/alsa-mixer/paths/analog-input-internal-mic.conf
-        cp tmp.conf $INFILE
-        set +x
-      '';
-    });
-
   # Needs a channel to be added via:
   #     sudo nix-channel --add https://nixos.org/channels/nixos-unstable unstable
   unstable = import <unstable> { config.allowUnfree = true; };
@@ -416,7 +360,6 @@ in
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.package = puseaudio_with_mic_boost_disabled;
   # Network sink streaming support
   hardware.pulseaudio.tcp.enable = true;
   # Note: As of writing (20.03), enabling zeroconf adds an `avahi` dep to the
