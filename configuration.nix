@@ -185,6 +185,7 @@ in
     bind.dnsutils # for `dig` etc.
     binutils # objdump, nm, readelf etc
     blender
+    calibre
     chromium
     custom-keyboard-layout
     screenlock-script
@@ -211,8 +212,8 @@ in
     gnome3.gnome-screenshot
     gnome3.gnome-system-monitor
     gnome3.gnome-terminal
-    gnome3.totem
     gnome3.nautilus # xfce's `thunar` freezes the UI during lage MTP transfers, nautilus doesn't
+    gnome3.totem
     gnome3.vinagre
     gnumake
     gnupg
@@ -281,7 +282,6 @@ in
     traceroute
     unzip
     usbutils # for lsusb
-    vim
     vlc
     wget
     wireshark
@@ -298,7 +298,7 @@ in
     zip
     zoom-us
 
-    # apcupsd
+    apcupsd
     rustc cargo binutils gcc pkgconfig # Rust development (from https://nixos.org/nixpkgs/manual/#rust)
     cmake freetype # for Alacritty rust development
 
@@ -357,6 +357,14 @@ in
     virt-manager
 
     zbar # QR code reader
+
+    # From https://nixos.wiki/wiki/Editor_Modes_for_Nix_Files#vim-nix
+    (pkgs.vim_configurable.customize {
+      name = "vim";
+      vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
+        start = [ vim-nix ]; # load plugin on startup
+      };
+    })
   ];
 
   # documentation.dev.enable = true;
