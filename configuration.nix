@@ -302,13 +302,16 @@ in
 
     zbar # QR code reader
 
+    vim
+    # TODO: Cannot currently use the following, it breaks the Backspace and
+    #       Delete keys, see https://github.com/LnL7/vim-nix/issues/38.
     # From https://nixos.wiki/wiki/Editor_Modes_for_Nix_Files#vim-nix
-    (pkgs.vim_configurable.customize {
-      name = "vim";
-      vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
-        start = [ vim-nix ]; # load plugin on startup
-      };
-    })
+    # (pkgs.vim_configurable.customize {
+    #   name = "vim";
+    #   vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
+    #     start = [ vim-nix ]; # load plugin on startup
+    #   };
+    # })
   ];
 
   # documentation.dev.enable = true;
