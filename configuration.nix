@@ -522,6 +522,10 @@ in
   # zsh
   programs.zsh.enable = true;
 
+  # Without this `gnome-terminal` errors with:
+  #     Error constructing proxy for org.gnome.Terminal:/org/gnome/Terminal/Factory0: Error calling StartServiceByName for org.gnome.Terminal: Unit gnome-terminal-server.service not found.
+  programs.gnome-terminal.enable = true;
+
   # i3 needs it, see https://nixos.wiki/wiki/I3#DConf
   programs.dconf.enable = true;
   services.dbus.packages = [ pkgs.gnome3.dconf ];
