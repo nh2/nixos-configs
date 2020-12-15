@@ -595,4 +595,36 @@ in
   # should.
   system.stateVersion = "19.09"; # Did you read the comment?
 
+  # Workaround for >4GiB files from Ricoh Theta being cut off during transfer.
+  # TODO: Remove if either:
+  #         * https://github.com/gphoto/libgphoto2/issues/582 made it into nixpkgs.
+  #         * https://github.com/libmtp/libmtp/pull/68 is fixed.
+  services.udev.extraRules = ''
+    # Ricoh Theta V (MTP)
+    ATTR{idVendor}=="05ca", ATTR{idProduct}=="0368", SYMLINK+="libmtp-%k", ENV{ID_MTP_DEVICE}="1", ENV{ID_MEDIA_PLAYER}="1"
+
+    # Ricoh Theta Z1 (MTP)
+    ATTR{idVendor}=="05ca", ATTR{idProduct}=="036d", SYMLINK+="libmtp-%k", ENV{ID_MTP_DEVICE}="1", ENV{ID_MEDIA_PLAYER}="1"
+  '';
+  services.gvfs.package = lib.mkForce (
+    (pkgs.gnome3.gvfs.overrideAttrs (old: {
+      patches = (old.patches or []) ++ [
+        (pkgs.fetchpatch {
+          name = "gvfs-mtp-Fix-crashes-when-LIBMTP_devicestorage_t.patch";
+          url = "https://gitlab.gnome.org/nh2/gvfs/-/commit/4eddc5d5588321918ec2780bdfba673a0d2d374b.patch";
+          sha256 = "1xqnyw1pdzsbzc9qs2srs94f5dr3w649qjsm2l40rh5hdc39wlxg";
+        })
+      ];
+    })).override (old: {
+      libmtp = old.libmtp.overrideAttrs (old: {
+        patches = (old.patches or []) ++ [
+          (pkgs.fetchpatch {
+            name = "libmtp-Add-Ricoh-Theta-V-and-Z1.patch";
+            url = "https://github.com/libmtp/libmtp/commit/395b1a22fcf7f089df3b1e37ee9942d622ef64a0.patch";
+            sha256 = "0f5bwxssqhwn3px4nqjfavsbxzv8zz4xq7p920pgkq62i02w8gr0";
+          })
+        ];
+      });
+    })
+  );
 }
