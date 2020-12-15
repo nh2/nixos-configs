@@ -319,7 +319,7 @@ in
 
     marktext
 
-    unstable.slack
+    slack
     libnotify # for `notify-send`
 
     unstable.jetbrains.clion
@@ -341,7 +341,7 @@ in
 
     inotify-tools # for inotifywait etc.
 
-    unstable.ripcord
+    ripcord
 
     luminanceHDR
 
