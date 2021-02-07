@@ -76,18 +76,32 @@ in
   networking.hostId = "25252525";
   boot.zfs.requestEncryptionCredentials = true;
 
-  # Enable exFAT support to use external storage (USB drives, SD cards etc).
-  boot.extraModulePackages = [ config.boot.kernelPackages.exfat-nofuse ];
+  boot.extraModulePackages = [
+    # Enable exFAT support to use external storage (USB drives, SD cards etc).
+    config.boot.kernelPackages.exfat-nofuse
+
+    # For being able to flip/mirror my webcam.
+    config.boot.kernelPackages.v4l2loopback
+  ];
+
+  # Register a v4l2loopback device at boot
+  boot.kernelModules = [
+    "v4l2loopback"
+  ];
 
   # For mounting many cameras.
   # Need to set `users.users.alice.extraGroups = ["camera"];` for each user allowed.
   programs.gphoto2.enable = true;
 
-  # Enable fan control for the Thinkpad; allows spinning the fan to max with:
-  #     echo level disengaged | sudo tee /proc/acpi/ibm/fan
-  boot.extraModprobeConfig = ''
-    options thinkpad_acpi fan_control=1
-  '';
+  boot.extraModprobeConfig =
+    # Enable fan control for the Thinkpad; allows spinning the fan to max with:
+    #     echo level disengaged | sudo tee /proc/acpi/ibm/fan
+    ''
+      options thinkpad_acpi fan_control=1
+    ''
+    + ''
+      options v4l2loopback exclusive_caps=1
+    '';
 
   networking.hostName = "t25"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -226,6 +240,7 @@ in
     traceroute
     unzip
     usbutils # for lsusb
+    v4l-utils
     vlc
     wget
     wireshark
