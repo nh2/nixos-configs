@@ -132,6 +132,7 @@ in
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     awscli2 # official `aws` CLI program
+    autossh
     cura
     eternal-terminal
     mumble
@@ -143,14 +144,19 @@ in
     bind.dnsutils # for `dig` etc.
     binutils # objdump, nm, readelf etc
     blender
+    bless
     calibre
     chromium
+    cloudcompare
     custom-keyboard-layout
     screenlock-script
     diffoscope
     ethtool
+    exfat-utils
+    ffmpeg
     file
     firefox
+    fractal
     fzf
     gajim
     gdb
@@ -211,6 +217,7 @@ in
     pasystray
     patchelf
     pavucontrol
+    pdfarranger
     pciutils # lspci
     powertop
     pv
@@ -241,6 +248,7 @@ in
     unzip
     usbutils # for lsusb
     v4l-utils
+    veracrypt
     vlc
     wget
     wireshark
