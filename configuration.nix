@@ -507,6 +507,10 @@ in
   # zsh
   programs.zsh.enable = true;
 
+  # Credential storage for GNOME programs (also gajim, fractal).
+  # Otherwise they won't remember credentials across restarts.
+  services.gnome3.gnome-keyring.enable = true;
+
   # Without this `gnome-terminal` errors with:
   #     Error constructing proxy for org.gnome.Terminal:/org/gnome/Terminal/Factory0: Error calling StartServiceByName for org.gnome.Terminal: Unit gnome-terminal-server.service not found.
   programs.gnome-terminal.enable = true;
