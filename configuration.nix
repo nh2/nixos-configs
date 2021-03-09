@@ -135,7 +135,7 @@ in
     autossh
     cura
     eternal-terminal
-    mumble
+    unstable.mumble # need at least 1.3.4 to avoid package loss
     (lib.hiPrio pkgs.parallel) # to take precedence over `parallel` from `moreutils`
     # (wineStaging.override { wineBuild = "wineWow"; }) # `wineWow` enables 64-bit support
     wineWowPackages.staging # `wineWow` enables 64-bit support
@@ -192,6 +192,7 @@ in
     keybase
     keybase-gui
     killall
+    krename
     libcap_ng
     libreoffice
     linuxPackages.perf
@@ -270,7 +271,6 @@ in
     cmake freetype # for Alacritty rust development
 
     audacity
-    obs-studio
     simplescreenrecorder
     ghc
 
@@ -308,7 +308,7 @@ in
 
     inotify-tools # for inotifywait etc.
 
-    ripcord
+    unstable.ripcord
 
     luminanceHDR
 
@@ -329,12 +329,18 @@ in
     # TODO: Cannot currently use the following, it breaks the Backspace and
     #       Delete keys, see https://github.com/LnL7/vim-nix/issues/38.
     # From https://nixos.wiki/wiki/Editor_Modes_for_Nix_Files#vim-nix
-    # (pkgs.vim_configurable.customize {
-    #   name = "vim";
-    #   vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
-    #     start = [ vim-nix ]; # load plugin on startup
-    #   };
-    # })
+    (pkgs.vim_configurable.customize {
+      name = "vim";
+      vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
+        # start = [ vim-nix ]; # load plugin on startup
+        start = []; # load plugin on startup
+      };
+    })
+
+    vscode
+
+    # Remove `unstable.` once on NixOS 21.05
+    # unstable.turbovnc
   ];
 
   # documentation.dev.enable = true;
