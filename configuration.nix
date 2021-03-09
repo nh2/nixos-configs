@@ -452,6 +452,9 @@ in
 
     # Screen notifications
     ${pkgs.xfce.xfce4-notifyd}/lib/xfce4/notifyd/xfce4-notifyd &
+
+    # Set Tex Shinobi keyboard middle mouse key scrolling to work as in Thinkpads
+    xinput set-int-prop "USB-HID Keyboard Mouse" "libinput Scroll Method Enabled" 8 0 0 1
   '';
 
   # Make polkit prompt show only 1 choice instead of both root and all `wheel` users.
