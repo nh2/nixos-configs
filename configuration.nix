@@ -577,6 +577,8 @@ in
   # should.
   system.stateVersion = "19.09"; # Did you read the comment?
 
+  services.keybase.enable = true;
+
   # Workaround for >4GiB files from Ricoh Theta being cut off during transfer.
   # TODO: Remove if either:
   #         * https://github.com/gphoto/libgphoto2/issues/582 made it into nixpkgs.
