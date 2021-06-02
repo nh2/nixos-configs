@@ -633,4 +633,49 @@ in
       });
     })
   );
+
+  services.fwupd.enable = true;
+
+  # Nvidia VFIO passthrough IOMMU settings, see
+  # * https://alexbakker.me/post/nixos-pci-passthrough-qemu-vfio.html
+  # * https://wiki.archlinux.org/index.php/PCI_passthrough_via_OVMF
+  # `DEVS` entry IDs are from https://wiki.archlinux.org/index.php/PCI_passthrough_via_OVMF#Ensuring_that_the_groups_are_valid,
+  # which for me is
+  #     IOMMU Group 10:
+  #       02:00.0 3D controller [0302]: NVIDIA Corporation GM108M [GeForce 940MX] [10de:134d] (rev a2)
+  # boot.kernelParams = [
+  #   "intel_iommu=on" "iommu=pt"
+  #   "video=efifb:off"
+  # ];
+  # boot.initrd.availableKernelModules = [ "vfio-pci" ];
+  # boot.initrd.preDeviceCommands = ''
+  #   DEVS="0000:02:00.0"
+  #   for DEV in $DEVS; do
+  #     echo "vfio-pci" > /sys/bus/pci/devices/$DEV/driver_override
+  #   done
+  #   modprobe -i vfio-pci
+  # '';
+  # # test by nh2
+  # boot.blacklistedKernelModules = [ "nouveau" ];
+
+
+  # Intel GPU passthrough
+
+  # boot.kernelParams = [
+  #   "intel_iommu=on" "iommu=pt"
+  # ];
+  # # See
+  # # * https://nixos.wiki/wiki/IGVT-g
+  # # * https://wiki.archlinux.org/index.php/Intel_GVT-g
+  # virtualisation.kvmgt = {
+  #   enable = true;
+  #   vgpus = {
+  #     "i915-GVTg_V5_2" = { # decides resolution, VRAM etc.
+  #       uuid = [ "30d6a6bb-d06f-4e71-baf8-d75a4fb54c13" ]; # arbitrary; made with `uuidgen`
+  #     };
+  #   };
+  # };
+
+  boot.blacklistedKernelModules = [ "nouveau" ];
+
 }
