@@ -166,6 +166,7 @@ in
     gitAndTools.diff-so-fancy
     gitAndTools.git-absorb
     gitAndTools.hub
+    gksu # for `gksudo` because `pkexec` currently cannot start Sublime Text
     glxinfo
     gnome-themes-standard # Provides theme in the XFCE theme switcher
     gnome3.cheese
@@ -239,8 +240,9 @@ in
     stack
     steam
     stress-ng
-    sublime3
-    sublime-merge
+    # When upgrading this to sublime4, remove PATH entry from home-manager
+    # sublime3
+    # sublime-merge
     sysdig
     sysstat
     tcpdump
@@ -253,6 +255,7 @@ in
     vlc
     wget
     wireshark
+    xorg.xhost
     xorg.xev
     xorg.xkbcomp
     xorg.xkill
@@ -337,10 +340,27 @@ in
       };
     })
 
-    vscode
+    unstable.vscode
 
     # Remove `unstable.` once on NixOS 21.05
     # unstable.turbovnc
+
+    bitwarden
+
+    # TODO: Remove when non-unstable is >= 0.7.0
+    unstable.bupstash
+
+    # OnlyOffice. Sstart with `DesktopEditors`.
+    # I had to download Windows fonts `Symbol.ttf` and `wingding.ttf`
+    # into `~/.local/share/fonts/` for bullet points to look correct,
+    # and Calibri to render my Calibri-written Word docs correctly.
+    # Arial is also required to be put there so that the default templates
+    # look as expected.
+    onlyoffice-bin
+
+    config.boot.kernelPackages.nvidia_x11
+
+    wireguard
   ];
 
   # documentation.dev.enable = true;
