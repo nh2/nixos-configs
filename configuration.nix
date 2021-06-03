@@ -105,9 +105,6 @@ in
   boot.zfs.requestEncryptionCredentials = true;
 
   boot.extraModulePackages = [
-    # Enable exFAT support to use external storage (USB drives, SD cards etc).
-    config.boot.kernelPackages.exfat-nofuse
-
     # For being able to flip/mirror my webcam.
     config.boot.kernelPackages.v4l2loopback
   ];
@@ -163,7 +160,7 @@ in
     autossh
     cura
     eternal-terminal
-    unstable.mumble # need at least 1.3.4 to avoid package loss
+    mumble # need at least 1.3.4 to avoid package loss
     (lib.hiPrio pkgs.parallel) # to take precedence over `parallel` from `moreutils`
     # (wineStaging.override { wineBuild = "wineWow"; }) # `wineWow` enables 64-bit support
     wineWowPackages.staging # `wineWow` enables 64-bit support
@@ -266,10 +263,9 @@ in
     smem
     sshfs-fuse
     stack
-    steam
+    (steam.override { extraProfile = ''unset VK_ICD_FILENAMES''; }) # TODO: Remove override when https://github.com/NixOS/nixpkgs/issues/108598#issuecomment-853489577 is fixed.
     stress-ng
-    # When upgrading this to sublime4, remove PATH entry from home-manager
-    # sublime3
+    unstable.sublime4
     # sublime-merge
     sysdig
     sysstat
@@ -371,7 +367,7 @@ in
     unstable.vscode
 
     # Remove `unstable.` once on NixOS 21.05
-    # unstable.turbovnc
+    turbovnc
 
     bitwarden
 
@@ -568,7 +564,7 @@ in
 
   # Credential storage for GNOME programs (also gajim, fractal).
   # Otherwise they won't remember credentials across restarts.
-  services.gnome3.gnome-keyring.enable = true;
+  services.gnome.gnome-keyring.enable = true;
 
   # Without this `gnome-terminal` errors with:
   #     Error constructing proxy for org.gnome.Terminal:/org/gnome/Terminal/Factory0: Error calling StartServiceByName for org.gnome.Terminal: Unit gnome-terminal-server.service not found.
@@ -740,15 +736,7 @@ in
     ATTR{idVendor}=="05ca", ATTR{idProduct}=="036d", SYMLINK+="libmtp-%k", ENV{ID_MTP_DEVICE}="1", ENV{ID_MEDIA_PLAYER}="1"
   '';
   services.gvfs.package = lib.mkForce (
-    (pkgs.gnome3.gvfs.overrideAttrs (old: {
-      patches = (old.patches or []) ++ [
-        (pkgs.fetchpatch {
-          name = "gvfs-mtp-Fix-crashes-when-LIBMTP_devicestorage_t.patch";
-          url = "https://gitlab.gnome.org/nh2/gvfs/-/commit/4eddc5d5588321918ec2780bdfba673a0d2d374b.patch";
-          sha256 = "1xqnyw1pdzsbzc9qs2srs94f5dr3w649qjsm2l40rh5hdc39wlxg";
-        })
-      ];
-    })).override (old: {
+    pkgs.gnome3.gvfs.override (old: {
       libmtp = old.libmtp.overrideAttrs (old: {
         patches = (old.patches or []) ++ [
           (pkgs.fetchpatch {
