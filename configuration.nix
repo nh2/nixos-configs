@@ -477,13 +477,6 @@ in
   # hardware.nvidia.powerManagement.enable = true;
   hardware.nvidia.modesetting.enable = true;
 
-  # Workaround to make standby resume work with nvidia without getting a black screen because the display is off.
-  # See https://github.com/NixOS/nixpkgs/issues/73494
-  systemd.services.nvidia-resume.serviceConfig = {
-    # Note: This has lightdm hardcoded.
-    ExecStartPost = "${pkgs.bash}/bin/bash -c 'sleep 2 && XAUTHORITY=/var/run/lightdm/root/:0 ${pkgs.xorg.xrandr}/bin/xrandr --display :0.0 --auto'";
-  };
-
   # Enable the KDE Desktop Environment.
   # services.xserver.displayManager.sddm.enable = true;
   # services.xserver.desktopManager.plasma5.enable = true;
