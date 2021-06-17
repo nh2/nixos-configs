@@ -498,9 +498,6 @@ in
 
     # Screen notifications
     ${pkgs.xfce.xfce4-notifyd}/lib/xfce4/notifyd/xfce4-notifyd &
-
-    # Set Tex Shinobi keyboard middle mouse key scrolling to work as in Thinkpads
-    xinput set-int-prop "USB-HID Keyboard Mouse" "libinput Scroll Method Enabled" 8 0 0 1
   '';
 
   # Make polkit prompt show only 1 choice instead of both root and all `wheel` users.
@@ -722,6 +719,32 @@ in
   # But not clear yet what sets it.
   # Currently suspecting that `xf86inputlibinput -> libinput -> udev` needs
   # my udev override. But requires a lot of recompilation.
+
+  # xinput to set my preferred scroll behaviour for the Tex Shinobi,
+  # via `xorg.conf` so that it also applies when re-plugged.
+  # The default scroll behaviour is:
+  #     services.xserver.libinput.mouse.scrollMethod = "twofinger";
+  # and we want the equivalent of
+  #     services.xserver.libinput.mouse.scrollMethod = "button";
+  # but only for this specific keyboard's trackpoint.
+  # Our config has to be `mkAfter` because xorg uses he *last* matching
+  # config section, so the one specific to this keyboard should be last.
+  # TODO: Until the above issue about naming is solved,
+  #       the Shinobi is called `USB-HID Keyboard Mouse`.)
+  services.xserver.config = lib.mkAfter ''
+    # Instead of:
+    #     xinput set-int-prop "USB-HID Keyboard Mouse" "libinput Scroll Method Enabled" 8 0 0 1
+    # See: https://bbs.archlinux.org/viewtopqic.php?pid=1941373#p1941373
+    # `0 0 1` translates to `button`, see https://www.mankier.com/4/libinput
+    # in section `libinput Scroll Method Enabled`.
+
+    Section "InputClass"
+      Identifier   "Tex Shinobi scroll settings"
+      MatchDriver  "libinput"
+      MatchProduct "USB-HID Keyboard Mouse"
+      Option       "ScrollMethod" "button"
+    EndSection
+  '';
 
 
   # Workaround for >4GiB files from Ricoh Theta being cut off during transfer.
