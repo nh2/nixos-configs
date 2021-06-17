@@ -582,11 +582,15 @@ in
     localuser = null; # required for mlocate, see https://github.com/NixOS/nixpkgs-channels/blob/42674051d12540d4a996504990c6ea3619505953/nixos/modules/misc/locate.nix#L130
   };
 
+  # Android adb
+  programs.adb.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.niklas = {
     isNormalUser = true;
     extraGroups = [
       # TODO: check if necessary
+      "adbusers" # Android ADB, see https://nixos.wiki/wiki/Android
       "audio" # See https://nixos.wiki/wiki/PulseAudio
       "networkmanager"
       "wheel" # Enable ‘sudo’ for the user.
