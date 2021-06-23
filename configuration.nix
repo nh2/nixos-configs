@@ -724,11 +724,9 @@ in
   # and we want the equivalent of
   #     services.xserver.libinput.mouse.scrollMethod = "button";
   # but only for this specific keyboard's trackpoint.
-  # Our config has to be `mkAfter` because xorg uses he *last* matching
-  # config section, so the one specific to this keyboard should be last.
   # TODO: Until the above issue about naming is solved,
   #       the Shinobi is called `USB-HID Keyboard Mouse`.)
-  services.xserver.config = lib.mkAfter ''
+  services.xserver.config = ''
     # Instead of:
     #     xinput set-int-prop "USB-HID Keyboard Mouse" "libinput Scroll Method Enabled" 8 0 0 1
     # See: https://bbs.archlinux.org/viewtopqic.php?pid=1941373#p1941373
