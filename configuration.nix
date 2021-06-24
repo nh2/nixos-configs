@@ -190,6 +190,7 @@ in
     # TODO: Replace by `delta` as soon as it's built on unstable
     gitAndTools.diff-so-fancy
     gitAndTools.git-absorb
+    gitAndTools.git-branchless
     gitAndTools.hub
     gksu # for `gksudo` because `pkexec` currently cannot start Sublime Text
     glxinfo
