@@ -70,6 +70,12 @@ in
         };
       });
 
+      # I found some segfaults of `xfce4-notifyd`; enable debug info so next time
+      # it happens I can check it (`cordumptctl`).
+      xfce4.xfce4-notifyd = previous.xfce4.xfce4-notifyd.overrideAttrs (oldAttrs: {
+        separateDebugInfo = true;
+      });
+
       xorg = previous.xorg.overrideScope' (
         # elements of pkgs.xorg must be taken from selfx and superx
         selfx: superx: {
@@ -456,6 +462,19 @@ in
   # hardware.pulseaudio.zeroconf.discovery.enable = true;
   # TODO: disable
   # hardware.pulseaudio.zeroconf.publish.enable = true;
+
+  # Allow core dumps
+  systemd.extraConfig = ''
+    # core dump limit in KB
+    DefaultLimitCORE=1000000
+
+    # Note that systemd-coredump may still throw away coredumps if you have
+    # < 15% disk free, see:
+    # https://unix.stackexchange.com/questions/554442/coredumpctl-cannot-read-core-dump-gives-message-file-is-not-readable-or-no-su/554460#554460
+  '';
+
+  # Install debug symbols for all packages that provide it.
+  environment.enableDebugInfo = true;
 
   # Steam needs this, see https://nixos.org/nixpkgs/manual/#sec-steam-play
   hardware.opengl.driSupport32Bit = true;
