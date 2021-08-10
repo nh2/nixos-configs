@@ -411,11 +411,20 @@ in
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  networking.firewall.enable = false;
+  networking.firewall = {
+    # Reject instead of drop.
+    rejectPackets = true;
+    logRefusedConnections = false; # Helps with auth brueforce log spam.
+    # Open ports in the firewall.
+    allowedTCPPorts = [
+      5201 # iperf3
+    ];
+    allowedUDPPorts = [
+      5201 # iperf3
+    ];
+    # Or disable the firewall altogether.
+    # enable = false;
+  };
 
   networking.networkmanager.enable = true;
 
