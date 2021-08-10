@@ -246,6 +246,7 @@ in
     nix-index
     nix-review
     nload
+    ntfy
     openscad
     openssl
     paprefs
