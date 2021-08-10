@@ -274,6 +274,7 @@ in
     sshfs-fuse
     stack
     (steam.override { extraProfile = ''unset VK_ICD_FILENAMES''; }) # TODO: Remove override when https://github.com/NixOS/nixpkgs/issues/108598#issuecomment-853489577 is fixed.
+    steam-run-native # See https://github.com/NixOS/nixpkgs/issues/128021#issuecomment-868001423
     stress-ng
     unstable.sublime4
     # sublime-merge
