@@ -7,6 +7,9 @@
 let
   # TODO: Improve this by making it a global name keyboard layout instead of using
   #       `sessionCommands`, see https://nixos.org/nixos/manual/#custom-xkb-layouts
+  #       But do this only once https://github.com/NixOS/nixpkgs/issues/117657
+  #       is implemented, otherwise every single package that depends on the X server
+  #       will need to be recompiled by adding a keyboard layout.
   customKeyboardLayoutScriptName = "keyboard-layout-gb-CapsLockIsHyperL";
   custom-keyboard-layout =
     # See https://nixos.wiki/wiki/Keyboard_Layout_Customization
@@ -455,7 +458,18 @@ in
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-  services.xserver.layout = "gb";
+  # Produce XKB dir containing custom keyboard layout by symlink-copying
+  # the normal XKB dir, and copying our keymap in.
+  services.xserver.xkbDir = pkgs.runCommand "custom-keyboard-layout-xkb-dir" {} ''
+    cp -r --symbolic-link "${pkgs.xkeyboard_config}/share/X11/xkb" "$out"
+    chmod -R u+w "$out"
+
+    mkdir -p "$out/keymap"
+    cp ${./xkb/keymap}/* "$out/keymap"
+    mkdir -p "$out/symbols"
+    cp ${./xkb/symbols}/* "$out/symbols"
+  '';
+  services.xserver.layout = "gb-CapsLockIsHyperL";
   # services.xserver.xkbOptions = "eurosign:e";
 
   # Enable touchpad support.
