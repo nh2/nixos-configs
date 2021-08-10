@@ -504,13 +504,13 @@ in
   # Enable touchpad support.
   services.xserver.libinput.enable = true;
 
- services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = [ "nvidia" ];
   # services.xserver.videoDrivers = [ "intel" ];
   # See https://nixos.wiki/wiki/Nvidia#offload_mode
   # Disabled for VFIO for now
   hardware.nvidia.prime = {
-  #   offload.enable = true; # offload mode (NVIDIA only used with `nvidia-offload` wrapper script)
-    sync.enable = true; # sync mode (both Intel and NVIDIA on all the time; resume-from-suspend gives black screen)
+    offload.enable = true; # offload mode (NVIDIA only used with `nvidia-offload` wrapper script)
+    # sync.enable = true; # sync mode (both Intel and NVIDIA on all the time; resume-from-suspend gives black screen)
 
     # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
     nvidiaBusId = "PCI:2:0:0";
@@ -518,7 +518,7 @@ in
     # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
     intelBusId = "PCI:0:2:0";
   };
-  # hardware.nvidia.powerManagement.enable = true;
+  hardware.nvidia.powerManagement.enable = true;
   hardware.nvidia.modesetting.enable = true;
 
   # Enable the KDE Desktop Environment.
@@ -784,7 +784,6 @@ in
       Option       "ScrollMethod" "button"
     EndSection
   '';
-
 
   # Workaround for >4GiB files from Ricoh Theta being cut off during transfer.
   # TODO: Remove if either:
