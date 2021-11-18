@@ -497,6 +497,8 @@ in
   services.xserver.enable = true;
   # Produce XKB dir containing custom keyboard layout by symlink-copying
   # the normal XKB dir, and copying our keymap in.
+  # TODO: This might stop working in the future:
+  #       https://github.com/NixOS/nixpkgs/pull/138207#issuecomment-972442368
   services.xserver.xkbDir = pkgs.runCommand "custom-keyboard-layout-xkb-dir" {} ''
     cp -r --symbolic-link "${pkgs.xkeyboard_config}/share/X11/xkb" "$out"
     chmod -R u+w "$out"
