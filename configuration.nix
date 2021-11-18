@@ -173,6 +173,7 @@ in
     (lib.hiPrio pkgs.parallel) # to take precedence over `parallel` from `moreutils`
     # (wineStaging.override { wineBuild = "wineWow"; }) # `wineWow` enables 64-bit support
     wineWowPackages.staging # `wineWow` enables 64-bit support
+    apg
     atop
     attr.bin # for `getfattr` etc.
     bind.dnsutils # for `dig` etc.
@@ -230,6 +231,7 @@ in
     killall
     krename
     libcap_ng
+    libqrencode # qrencode
     libreoffice
     linuxPackages.perf
     lm_sensors
@@ -258,16 +260,19 @@ in
     pdfarranger
     pciutils # lspci
     powertop
+    psmisc # fuser
     pv
     python3
     qtpass
     rclone
+    remmina
     reptyr
     ripgrep
     rofi
     rxvt-unicode
     screen
     screen-message
+    shellcheck
     signal-desktop
     skype
     smartmontools
@@ -290,7 +295,9 @@ in
     veracrypt
     vlc
     wget
+    wirelesstools # iwconfig/iwgetid for wifi info
     wireshark
+    x11vnc
     xorg.xhost
     xorg.xev
     xorg.xkbcomp
