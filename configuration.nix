@@ -279,10 +279,10 @@ in
     smem
     sshfs-fuse
     stack
-    (steam.override { extraProfile = ''unset VK_ICD_FILENAMES''; }) # TODO: Remove override when https://github.com/NixOS/nixpkgs/issues/108598#issuecomment-853489577 is fixed.
+    steam # (steam.override { extraProfile = ''unset VK_ICD_FILENAMES''; }) # TODO: Remove override when https://github.com/NixOS/nixpkgs/issues/108598#issuecomment-853489577 is fixed.
     steam-run-native # See https://github.com/NixOS/nixpkgs/issues/128021#issuecomment-868001423
     stress-ng
-    unstable.sublime4
+    sublime4
     # sublime-merge
     sysdig
     sysstat
@@ -335,7 +335,7 @@ in
     slack
     libnotify # for `notify-send`
 
-    unstable.jetbrains.clion
+    jetbrains.clion
     xdotool
     valgrind
     sqlite
@@ -354,7 +354,7 @@ in
 
     inotify-tools # for inotifywait etc.
 
-    unstable.ripcord
+    ripcord
 
     luminanceHDR
 
@@ -383,15 +383,13 @@ in
       };
     })
 
-    unstable.vscode
+    vscode
 
-    # Remove `unstable.` once on NixOS 21.05
     turbovnc
 
     bitwarden
 
-    # TODO: Remove when non-unstable is >= 0.7.0
-    unstable.bupstash
+    bupstash
 
     # OnlyOffice. Sstart with `DesktopEditors`.
     # I had to download Windows fonts `Symbol.ttf` and `wingding.ttf`
@@ -653,8 +651,8 @@ in
 
   virtualisation.libvirtd = {
     enable = true;
-    qemuOvmf = true;
-    qemuRunAsRoot = false;
+    qemu.ovmf.enable = true;
+    qemu.runAsRoot = false;
     onBoot = "ignore";
     onShutdown = "shutdown";
   };
@@ -678,98 +676,6 @@ in
   system.stateVersion = "19.09"; # Did you read the comment?
 
   services.keybase.enable = true;
-
-  # TEX Shinobi detection
-  # This function shows what needs to be generated:
-  #     https://github.com/systemd/systemd/blob/5efbd0bf897a990ebe43d7dc69141d87c404ac9a/hwdb.d/ids_parser.py#L130
-  # Example:
-  #     https://github.com/ramitsurana/rocket-images/blob/8c2eb3b0452365cd1291af4830aece9f1e9d01a7/utils/ubuntu-core-rootfs/lib/udev/hwdb.d/20-usb-vendor-model.hwdb#L521-L522
-  # After applying this config, `lsusb` should immediately list the new name.
-  # Note that the hexadecimal USB vendor/device IDs need to be UPPERCASE letters
-  # for that to work (see http://disq.us/p/26edguk).
-  # The `evdev:input` part is required for `xinput list` to show the correct name.
-  # That is explained on:
-  #     https://yulistic.gitlab.io/2017/12/linux-keymapping-with-udev-hwdb/
-  # With `udevadm info --export-db` one can check the names for the differnt
-  # subsystems (e.g. `usb` and `input`).
-  # This page shows how to find which parts of `udevadm info` are relevant
-  # or not yet updated correctly:
-  #     https://unix.stackexchange.com/a/220082/100270
-  # However,
-  #     https://github.com/systemd/systemd/issues/4750#issuecomment-263341912
-  # suggetst that a hwdb entry is *not* the right way to override the model
-  # name for an existing device.
-  # Further down:
-  # > So the new field does get added, but it does not change the existing field.
-  # Edit:
-  # It looks like `xinput` uses udev's `NAME` and seems unoverridable
-  # with hwdb entries; I suspect I really have to patch udev to use a newer
-  # `usb.ids` file.
-  # TODO: Remove this in NixOS 21.11, which will likely have
-  #       the http://www.linux-usb.org/usb.ids that today already has
-  #       `TEX Shinobi` in copied to udev at:
-  #           https://github.com/systemd/systemd/blob/main/hwdb.d/usb.ids
-  services.udev.extraHwdb = ''
-    # TEX Shinobi
-
-    # Entry for lsusb
-    usb:v04D9p0407*
-     NAME=TEX_Shinobi
-     ID_MODEL_FROM_DATABASE=Keyboard [TEX Shinobi]
-     ID_MODEL=Keyboard_TEX_Shinobi
-     ID_MODEL_ENC=TEX\x20Shinobi
-
-    # Entry for libinput/xorg
-    evdev:input:b0003v04D9p0407*
-     NAME=TEX_Shinobi
-     ID_MODEL_FROM_DATABASE=Keyboard [TEX Shinobi]
-     ID_MODEL=Keyboard_TEX_Shinobi
-     ID_MODEL_ENC=TEX\x20Shinobi
-     KEYBOARD_KEY_10082=reserved
-  '';
-
-  systemd.package = pkgs.systemd.overrideAttrs (old: {
-    prePatch =
-      let
-        newerUsbIds = pkgs.fetchurl {
-          # Versioned mirror of http://www.linux-usb.org/usb.ids
-          url = "https://raw.githubusercontent.com/usbids/usbids/3b17019b07487f8facc635bd1cabdfb970e29b78/usb.ids";
-          sha256 = "0wh1njhp7dxk6hs962zf6g19fw8r72dbwv5nh1xwywp32pwd2aaf";
-        };
-      in
-        ''
-          ${old.prePatch or ""}
-          cp "${newerUsbIds}" hwdb.d/usb.ids
-        '';
-  });
-
-  # The above override in systemd/udev also didn't work to make the keyboard
-  # show with its name in `xinput list`.
-  # The "Consumer Control" suffix that I see in `dmesg`
-  #     input: USB-HID Keyboard Consumer Control as /devices/pci0000...
-  # comes from here:
-  #     https://github.com/torvalds/linux/blob/b90e90f40b4ff23c753126008bf4713a42353af6/drivers/hid/hid-input.c#L1729
-  # There's also a "Keyboard" suffix which I also see.
-  # I also see:
-  #     New USB device found, idVendor=04d9, idProduct=0407, bcdDevice= 3.10
-  #     New USB device strings: Mfr=0, Product=1, SerialNumber=3
-  #     Product: USB-HID Keyboard
-  #     SerialNumber: 000000000407
-  # `lsusb -v` shows:
-  #     Device Descriptor:
-  #       ...
-  #       idVendor           0x04d9 Holtek Semiconductor, Inc.
-  #       idProduct          0x0407 Keyboard [TEX Shinobi]
-  #       bcdDevice            3.10
-  #       iManufacturer           0
-  #       iProduct                1 USB-HID Keyboard
-  #       iSerial                 3 000000000407
-  # So `iProduct` seems to be what `xinput list` shows.
-  # It comes from:
-  #     https://libusb.sourceforge.io/api-1.0/structlibusb__device__descriptor.html
-  # But not clear yet what sets it.
-  # Currently suspecting that `xf86inputlibinput -> libinput -> udev` needs
-  # my udev override. But requires a lot of recompilation.
 
   # xinput to set my preferred scroll behaviour for the Tex Shinobi,
   # via `xorg.conf` so that it also applies when re-plugged.
