@@ -459,16 +459,25 @@ in
     hplip
   ];
 
-  # Enable sound.
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
-  # Network sink streaming support
-  hardware.pulseaudio.tcp.enable = true;
-  # Note: As of writing (20.03), enabling zeroconf adds an `avahi` dep to the
-  #       pulseaudio dep so it will be compiled, not fetched from cache.
-  # hardware.pulseaudio.zeroconf.discovery.enable = true;
-  # TODO: disable
-  # hardware.pulseaudio.zeroconf.publish.enable = true;
+  # Disabled in order to use PipeWire, as recommended on https://nixos.wiki/wiki/PipeWire
+  # # Enable sound.
+  # sound.enable = true;
+  # hardware.pulseaudio.enable = true;
+  # # Network sink streaming support
+  # hardware.pulseaudio.tcp.enable = true;
+  # # Note: As of writing (20.03), enabling zeroconf adds an `avahi` dep to the
+  # #       pulseaudio dep so it will be compiled, not fetched from cache.
+  # # hardware.pulseaudio.zeroconf.discovery.enable = true;
+  # # TODO: disable
+  # # hardware.pulseaudio.zeroconf.publish.enable = true;
+
+  security.rtkit.enable = true; # rtkit is optional but recommended for PipeWire
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
 
   # Allow core dumps
   systemd.extraConfig = ''
