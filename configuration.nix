@@ -246,6 +246,7 @@ in
     moreutils
     mplayer
     ncdu
+    nebula
     netcat-openbsd
     nix-diff
     nix-index
