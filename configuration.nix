@@ -5,6 +5,8 @@
 { config, pkgs, lib, ... }:
 
 let
+  useWayland = false;
+
   # TODO: Improve this by making it a global name keyboard layout instead of using
   #       `sessionCommands`, see https://nixos.org/nixos/manual/#custom-xkb-layouts
   #       But do this only once https://github.com/NixOS/nixpkgs/issues/117657
@@ -190,6 +192,7 @@ in
     exfat-utils
     ffmpeg
     file
+    #(if useWayland then firefox-wayland else firefox)
     firefox
     fractal
     fzf
@@ -501,7 +504,7 @@ in
   ];
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  services.xserver.enable = !useWayland;
   # Produce XKB dir containing custom keyboard layout by symlink-copying
   # the normal XKB dir, and copying our keymap in.
   # TODO: This might stop working in the future:
@@ -521,11 +524,11 @@ in
   # Enable touchpad support.
   services.xserver.libinput.enable = true;
 
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = if useWayland then [ "intel" ] else [ "nvidia" ];
   # services.xserver.videoDrivers = [ "intel" ];
   # See https://nixos.wiki/wiki/Nvidia#offload_mode
   # Disabled for VFIO for now
-  hardware.nvidia.prime = {
+  hardware.nvidia.prime = lib.mkIf (!useWayland) {
     offload.enable = true; # offload mode (NVIDIA only used with `nvidia-offload` wrapper script)
     # sync.enable = true; # sync mode (both Intel and NVIDIA on all the time; resume-from-suspend gives black screen)
 
@@ -542,7 +545,7 @@ in
   # services.xserver.displayManager.sddm.enable = true;
   # services.xserver.desktopManager.plasma5.enable = true;
 
-  services.xserver.displayManager.lightdm.enable = true;
+  services.xserver.displayManager.lightdm.enable = !useWayland;
   services.xserver.displayManager.sessionCommands = ''
     # Map Caps_Lock to Hyper_L
     ${custom-keyboard-layout}/bin/${customKeyboardLayoutScriptName}
@@ -579,6 +582,29 @@ in
       i3status
       i3lock
     ];
+  };
+
+  programs.sway = lib.mkIf useWayland {
+    enable = true;
+    wrapperFeatures.gtk = true; # so that gtk works properly
+    extraPackages = with pkgs; [
+      swaylock
+      swayidle
+      wl-clipboard
+      mako # notification daemon
+      alacritty # Alacritty is the default terminal in the config
+      dmenu # Dmenu is the default in the config but i recommend wofi since its wayland native
+    ];
+  };
+  xdg = lib.mkIf useWayland {
+    portal = {
+      enable = true;
+      wlr.enable = true;
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-gtk
+      ];
+      gtkUsePortal = true;
+    };
   };
 
   # Brightness control, see https://nixos.wiki/wiki/Backlight#Key_mapping
