@@ -114,6 +114,14 @@ in
   boot.supportedFilesystems = [ "zfs" ];
   networking.hostId = "25252525";
   boot.zfs.requestEncryptionCredentials = true;
+  # Hibernation with ZFS is unsafe; thus disable it.
+  # This is likely the case even if the swap is put on a non-ZFS partition,
+  # because the ZFS code paths do not handle being hibernated properly.
+  # See:
+  # * https://nixos.wiki/wiki/ZFS#Known_issues
+  # * https://github.com/openzfs/zfs/issues/12842
+  # * https://github.com/openzfs/zfs/issues/12843
+  boot.kernelParams = [ "nohibernate" ];
 
   boot.extraModulePackages = [
     # For being able to flip/mirror my webcam.

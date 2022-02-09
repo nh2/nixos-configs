@@ -28,10 +28,6 @@
       fsType = "vfat";
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/7880e746-1b0c-471a-8e9a-63f33512e852"; }
-    ];
-
   nix.maxJobs = lib.mkDefault 2;
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 }
