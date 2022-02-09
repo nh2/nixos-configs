@@ -193,6 +193,7 @@ in
     calibre
     chromium
     cloudcompare
+    cryptsetup
     custom-keyboard-layout
     screenlock-script
     diffoscope
@@ -241,6 +242,7 @@ in
     keybase-gui
     killall
     krename
+    libarchive # bsdtar
     libcap_ng
     libqrencode # qrencode
     libreoffice
