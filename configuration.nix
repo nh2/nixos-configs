@@ -252,7 +252,15 @@ in
     lz4
     lzop
     meld
-    meshlab
+    (meshlab.overrideAttrs (old: {
+      patches = (old.patches or []) ++ [
+        (pkgs.fetchpatch {
+          name = "meshlab-Select-faces-by-view-angle-ViewPoint-fix.patch";
+          url = "https://github.com/nh2/meshlab/commit/57b1739584c3b746040ae42632ce1c81f1fe4303.patch";
+          sha256 = "1rszpwxbwnwf9yw95z7dwl88j0xrmax84k10d4sjs5y6nvav0jfw";
+        })
+      ];
+    }))
     moreutils
     mplayer
     ncdu
