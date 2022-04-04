@@ -78,32 +78,6 @@ in
         separateDebugInfo = true;
       });
 
-      xorg = previous.xorg.overrideScope' (
-        # elements of pkgs.xorg must be taken from selfx and superx
-        selfx: superx: {
-          inherit (previous.xorg) xlibsWrapper; # fixes `attribute 'xlibsWrapper' missing`
-
-          xf86inputlibinput = superx.xf86inputlibinput.override ({
-            libinput = previous.libinput.override ({
-              udev = final.systemd.overrideAttrs (old: {
-                prePatch =
-                  let
-                    newerUsbIds = final.fetchurl {
-                      # Versioned mirror of http://www.linux-usb.org/usb.ids
-                      url = "https://raw.githubusercontent.com/usbids/usbids/3b17019b07487f8facc635bd1cabdfb970e29b78/usb.ids";
-                      sha256 = "0wh1njhp7dxk6hs962zf6g19fw8r72dbwv5nh1xwywp32pwd2aaf";
-                    };
-                  in
-                    ''
-                      ${old.prePatch or ""}
-                      cp "${newerUsbIds}" hwdb.d/usb.ids
-                    '';
-              });
-            });
-          });
-        }
-      );
-
     })
   ];
 
