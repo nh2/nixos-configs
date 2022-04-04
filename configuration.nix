@@ -225,7 +225,7 @@ in
     gnome3.gnome-screenshot
     gnome3.gnome-system-monitor
     gnome3.gnome-terminal
-    gnome3.nautilus # xfce's `thunar` freezes the UI during lage MTP transfers, nautilus doesn't
+    gnome3.nautilus # xfce's `thunar` freezes the UI during large MTP transfers, nautilus doesn't
     gnome3.totem
     gnome3.vinagre
     gnumake
