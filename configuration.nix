@@ -280,8 +280,6 @@ in
     smem
     sshfs-fuse
     stack
-    steam # (steam.override { extraProfile = ''unset VK_ICD_FILENAMES''; }) # TODO: Remove override when https://github.com/NixOS/nixpkgs/issues/108598#issuecomment-853489577 is fixed.
-    steam-run-native # See https://github.com/NixOS/nixpkgs/issues/128021#issuecomment-868001423
     stress-ng
     sublime4
     # sublime-merge
@@ -778,4 +776,8 @@ in
 
   boot.blacklistedKernelModules = [ "nouveau" ];
 
+  # With the below, running games like Dota2 currently requires using `steam-run`, e.g.:
+  #     steam-run ~/.steam/steam/steamapps/common/dota\ 2\ beta/game/bin/linuxsteamrt64/dota2
+  # Otherwise they hang with a library error on startup.
+  programs.steam.enable = true;
 }
