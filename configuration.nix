@@ -253,13 +253,18 @@ in
     lzop
     meld
     (meshlab.overrideAttrs (old: {
-      patches = (old.patches or []) ++ [
-        (pkgs.fetchpatch {
-          name = "meshlab-Select-faces-by-view-angle-ViewPoint-fix.patch";
-          url = "https://github.com/nh2/meshlab/commit/57b1739584c3b746040ae42632ce1c81f1fe4303.patch";
-          sha256 = "1rszpwxbwnwf9yw95z7dwl88j0xrmax84k10d4sjs5y6nvav0jfw";
-        })
-      ];
+      # Fixes:
+      # * "Select faces by view angle" "Get" button gets normal instead of position
+      #   https://github.com/cnr-isti-vclab/meshlab/issues/1207
+      # * GUI regression: Popups broken on Linux Xorg tiling window managers
+      #   https://github.com/cnr-isti-vclab/meshlab/issues/1209
+      src = pkgs.fetchFromGitHub {
+        owner = "cnr-isti-vclab";
+        repo = "meshlab";
+        rev = "cb2f5ed4fd1ab78fa3a1420fb6c47a6e97a17143";
+        sha256 = "19ryyxn9lb5h3vqbxyi3gjk9sz5x4hla39hab6vifb2w8g086rl2";
+        fetchSubmodules = true; # for vcglib
+      };
     }))
     moreutils
     mplayer
