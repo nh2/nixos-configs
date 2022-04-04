@@ -407,6 +407,12 @@ in
 
   powerManagement.enable = true;
 
+  # When suspending, kill all sshfs instances, as otherwise it can make
+  # either suspend or resume hang (hang on resume requires force reboot).
+  powerManagement.powerDownCommands = ''
+    ${pkgs.procps}/bin/pkill -9 sshfs
+  '';
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   programs.mtr.enable = true;
