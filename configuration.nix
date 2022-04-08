@@ -226,20 +226,12 @@ in
     lz4
     lzop
     meld
-    (meshlab.overrideAttrs (old: {
-      # Fixes:
-      # * "Select faces by view angle" "Get" button gets normal instead of position
-      #   https://github.com/cnr-isti-vclab/meshlab/issues/1207
-      # * GUI regression: Popups broken on Linux Xorg tiling window managers
-      #   https://github.com/cnr-isti-vclab/meshlab/issues/1209
-      src = pkgs.fetchFromGitHub {
-        owner = "cnr-isti-vclab";
-        repo = "meshlab";
-        rev = "cb2f5ed4fd1ab78fa3a1420fb6c47a6e97a17143";
-        sha256 = "19ryyxn9lb5h3vqbxyi3gjk9sz5x4hla39hab6vifb2w8g086rl2";
-        fetchSubmodules = true; # for vcglib
-      };
-    }))
+    # Version 2022.02 from `unstable` fixes:
+    # * "Select faces by view angle" "Get" button gets normal instead of position
+    #   https://github.com/cnr-isti-vclab/meshlab/issues/1207
+    # * GUI regression: Popups broken on Linux Xorg tiling window managers
+    #   https://github.com/cnr-isti-vclab/meshlab/issues/1209
+    unstable.meshlab
     moreutils
     mplayer
     ncdu
