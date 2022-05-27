@@ -468,6 +468,11 @@ in
   # # TODO: disable
   # # hardware.pulseaudio.zeroconf.publish.enable = true;
 
+  # Bluetooth
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = false;
+  services.blueman.enable = true;
+
   security.rtkit.enable = true; # rtkit is optional but recommended for PipeWire
   services.pipewire = {
     enable = true;
