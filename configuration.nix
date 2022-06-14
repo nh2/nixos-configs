@@ -172,7 +172,7 @@ in
     screenlock-script
     diffoscope
     ethtool
-    exfat-utils
+    exfat
     ffmpeg
     file
     #(if useWayland then firefox-wayland else firefox)
@@ -188,14 +188,13 @@ in
     gitAndTools.git-absorb
     gitAndTools.git-branchless
     gitAndTools.hub
-    gksu # for `gksudo` because `pkexec` currently cannot start Sublime Text
+    glade
     glxinfo
-    gnome-themes-standard # Provides theme in the XFCE theme switcher
+    gnome-themes-extra # Provides theme in the XFCE theme switcher
     gnome3.cheese
     gnome3.eog
     gnome3.evince
     gnome3.file-roller
-    gnome3.glade
     gnome3.gnome-screenshot
     gnome3.gnome-system-monitor
     gnome3.gnome-terminal
@@ -218,7 +217,6 @@ in
     krename
     libarchive # bsdtar
     libcap_ng
-    libqrencode # qrencode
     libreoffice
     linuxPackages.perf
     lm_sensors
@@ -226,12 +224,7 @@ in
     lz4
     lzop
     meld
-    # Version 2022.02 from `unstable` fixes:
-    # * "Select faces by view angle" "Get" button gets normal instead of position
-    #   https://github.com/cnr-isti-vclab/meshlab/issues/1207
-    # * GUI regression: Popups broken on Linux Xorg tiling window managers
-    #   https://github.com/cnr-isti-vclab/meshlab/issues/1209
-    unstable.meshlab
+    meshlab
     moreutils
     mplayer
     ncdu
@@ -256,6 +249,7 @@ in
     psmisc # fuser
     pv
     python3
+    qrencode
     qtpass
     rclone
     remmina
@@ -267,7 +261,7 @@ in
     screen-message
     shellcheck
     signal-desktop
-    skype
+    skypeforlinux
     smartmontools
     smem
     sshfs-fuse
@@ -392,7 +386,7 @@ in
 
     config.boot.kernelPackages.nvidia_x11
 
-    wireguard
+    wireguard-tools
   ];
 
   # documentation.dev.enable = true;
@@ -648,7 +642,7 @@ in
 
   # i3 needs it, see https://nixos.wiki/wiki/I3#DConf
   programs.dconf.enable = true;
-  services.dbus.packages = [ pkgs.gnome3.dconf ];
+  services.dbus.packages = [ pkgs.dconf ];
 
   # Yubikey
   services.udev.packages = [ pkgs.yubikey-personalization ];
