@@ -146,6 +146,8 @@ in
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
 
+  services.teamviewer.enable = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -157,6 +159,7 @@ in
     (lib.hiPrio pkgs.parallel) # to take precedence over `parallel` from `moreutils`
     # (wineStaging.override { wineBuild = "wineWow"; }) # `wineWow` enables 64-bit support
     wineWowPackages.staging # `wineWow` enables 64-bit support
+    alsa-utils
     apg
     atop
     attr.bin # for `getfattr` etc.
@@ -339,7 +342,7 @@ in
 
     inotify-tools # for inotifywait etc.
 
-    ripcord
+    # ripcord
 
     luminanceHDR
 
@@ -492,8 +495,9 @@ in
   hardware.opengl.driSupport32Bit = true;
   hardware.pulseaudio.support32Bit = true;
   hardware.opengl.extraPackages = with pkgs; [
+    # Work around "A game file appears to be missing or corrupted" in Steam.
     # See https://www.reddit.com/r/DotA2/comments/e24l6q/a_game_file_appears_to_be_missing_or_corrupted/
-    libva
+    #libva
   ];
 
   # Enable the X11 windowing system.
@@ -647,6 +651,15 @@ in
   # Yubikey
   services.udev.packages = [ pkgs.yubikey-personalization ];
   services.pcscd.enable = true;
+
+  # Ultimate Hacking Keyboard
+  services.udev.extraRules = ''
+    # These are the udev rules for accessing the USB interfaces of the UHK as non-root users.
+    # Copy this file to /etc/udev/rules.d and physically reconnect the UHK afterwards.
+    SUBSYSTEM=="input", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="612[0-7]", GROUP="input", MODE="0660"
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="612[0-7]", TAG+="uaccess"
+    KERNEL=="hidraw*", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="612[0-7]", TAG+="uaccess"
+  '';
 
   # locate
   services.locate = {
