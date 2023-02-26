@@ -480,6 +480,15 @@ in
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    config.pipewire = {
+      # Trying to fix crackling (more apparent when many audio sources are playing simultaneously):
+      # Does not seem to help :(
+      "context.properties" = {
+        "default.clock.quantum" = "2048";
+        "default.clock.min-quantum" = "1024";
+        "default.clock.max-quantum" = "4096";
+      };
+    };
   };
 
   # Allow core dumps
