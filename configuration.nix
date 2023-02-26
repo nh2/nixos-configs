@@ -144,7 +144,8 @@ in
 
 
   # Set your time zone.
-  time.timeZone = "Europe/Berlin";
+  #time.timeZone = "Europe/Berlin";
+  time.timeZone = "America/Denver";
 
   services.teamviewer.enable = true;
 
