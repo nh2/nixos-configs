@@ -210,6 +210,7 @@ in
     graphviz
     hdparm
     htop
+    imhex
     inkscape
     iotop
     iperf3
@@ -218,6 +219,7 @@ in
     keybase-gui
     killall
     krename
+    lapce
     libarchive # bsdtar
     libcap_ng
     libreoffice
@@ -230,6 +232,7 @@ in
     meshlab
     moreutils
     mplayer
+    mpv
     ncdu
     nebula
     netcat-openbsd
@@ -251,7 +254,7 @@ in
     powertop
     psmisc # fuser
     pv
-    python3
+    (python3.withPackages (ps: with ps; [ numpy ]))
     qrencode
     qtpass
     rclone
@@ -275,6 +278,7 @@ in
     sysdig
     sysstat
     tcpdump
+    texmacs
     thunderbird
     traceroute
     unzip
