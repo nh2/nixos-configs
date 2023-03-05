@@ -457,6 +457,9 @@ in
     hplip
   ];
 
+  # To fix ThinkPad throttling too early. See https://news.ycombinator.com/item?id=35026337
+  services.thermald.enable = true;
+
   # Disabled in order to use PipeWire, as recommended on https://nixos.wiki/wiki/PipeWire
   # # Enable sound.
   # sound.enable = true;
