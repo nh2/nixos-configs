@@ -651,6 +651,77 @@ in
 
   # zsh
   programs.zsh.enable = true;
+  programs.zsh.interactiveShellInit = ''
+    # Enable the below for profiling zsh's startup speed.
+    # Once enabled, get numbers using:
+    #     zsh -i -l -c 'zprof'
+    #zmodload zsh/zprof
+
+    # Disable `compaudit` being invoked from GRML cominit call.
+    # See: https://grml.org/zsh/grmlzshrc.html
+    # This speeds up shell loading.
+    zstyle ':grml:completion:compinit' arguments -C
+
+    # Load grml's zshrc.
+    # Note that loading grml's zshrc here will override NixOS settings such as
+    # `programs.zsh.histSize`, so they will have to be set again below.
+    source ${pkgs.grml-zsh-config}/etc/zsh/zshrc
+
+    # From https://htr3n.github.io/2018/07/faster-zsh/
+    # Theoretically it should not be needed (as described on https://dev.to/djmoch/zsh-compinit--rtfm-47kg)
+    # but I couldn't figure out how to make the GRML zshrc do only a single compinit
+    # without compaudit but generating .zcompdump (I use `-C` for
+    # `:grml:completion:compinit` above to avoid compaudit but that also skips
+    # generating `.zcompdump` apparently).
+    # Snippet based on https://gist.github.com/ctechols/ca1035271ad134841284
+    autoload -Uz compinit
+    if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+      compinit
+    else
+      # We don't do `compinit -C` here because the GRML zshrc already did it above.
+    fi
+
+    # Disable grml's persistent dirstack feature.
+    # This ensures that it cannot hang the shell when `.zdirs` contains
+    # a path from a slow/hanging network mount.
+    # This needs to be done before loading grml's zshrc, see:
+    # https://github.com/grml/grml-etc-core/issues/136
+    zstyle ':grml:chpwd:dirstack' enable false
+
+    alias d='ls -lah'
+    alias g=git
+
+    # Increase history size.
+    HISTSIZE=10000000
+
+    # Prompt modifications.
+    #
+    # In current grml zshrc, changing `$PROMPT` no longer works,
+    # and `zstyle` is used instead, see:
+    # https://unix.stackexchange.com/questions/656152/why-does-setting-prompt-have-no-effect-in-grmls-zshrc
+
+    # Disable the grml `sad-smiley` on the right for exit codes != 0;
+    # it makes copy-pasting out terminal output difficult.
+    # Done by setting the `items` of the right-side setup to the empty list
+    # (as of writing, the default is `items sad-smiley`).
+    # See: https://bts.grml.org/grml/issue2267
+    zstyle ':prompt:grml:right:setup' items
+
+    # Keybinding modifications
+    source ${./zsh/keybindings-alt-left-right-word-jumping.zsh}
+
+    # Add nix-shell indicator that makes clear when we're in nix-shell.
+    # Set the prompt items to include it in addition to the defaults:
+    # Described in: http://bewatermyfriend.org/p/2013/003/
+    function nix_shell_prompt () {
+      REPLY=''${IN_NIX_SHELL+"(nix-shell) "}
+    }
+    grml_theme_add_token nix-shell-indicator -f nix_shell_prompt '%F{magenta}' '%f'
+    zstyle ':prompt:grml:left:setup' items rc nix-shell-indicator change-root user at host path vcs percent
+  '';
+  programs.zsh.promptInit = ""; # otherwise it'll override the grml prompt
+  # Speed up zsh start by running compinit manually (see config above).
+  programs.zsh.enableGlobalCompInit = false;
 
   # Credential storage for GNOME programs (also gajim, fractal).
   # Otherwise they won't remember credentials across restarts.
