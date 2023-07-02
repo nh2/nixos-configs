@@ -598,8 +598,8 @@ in
   # Enable touchpad support.
   services.xserver.libinput.enable = true;
 
-  services.xserver.videoDrivers = if useWayland then [ "intel" ] else [ "nvidia" ];
-  # services.xserver.videoDrivers = [ "intel" ];
+  # services.xserver.videoDrivers = if useWayland then [ "intel" ] else [ "nvidia" ];
+  services.xserver.videoDrivers = [ "intel" ];
   # See https://nixos.wiki/wiki/Nvidia#offload_mode
   # Disabled for VFIO for now
   hardware.nvidia.prime = lib.mkIf (!useWayland) {
