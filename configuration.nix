@@ -300,6 +300,7 @@ in
     nix-index
     nix-review
     nload
+    nmap
     ntfy
     openscad
     openssl
