@@ -138,9 +138,9 @@ in
   ];
 
   # Register a v4l2loopback device at boot
-  boot.kernelModules = [
-    "v4l2loopback"
-  ];
+  #boot.kernelModules = [
+  # "v4l2loopback"
+  #];
 
   # For mounting many cameras.
   # Need to set `users.users.alice.extraGroups = ["camera"];` for each user allowed.
