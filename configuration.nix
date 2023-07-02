@@ -863,7 +863,7 @@ in
   # should.
   system.stateVersion = "19.09"; # Did you read the comment?
 
-  services.keybase.enable = true;
+  # services.keybase.enable = true;
 
   # xinput to set my preferred scroll behaviour for the Tex Shinobi,
   # via `xorg.conf` so that it also applies when re-plugged.
