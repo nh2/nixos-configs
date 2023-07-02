@@ -264,7 +264,32 @@ in
     lz4
     lzop
     meld
-    meshlab
+    (meshlab.overrideAttrs (old: {
+      patches = (old.patches or []) ++ [
+        # TODO: Remove when https://github.com/cnr-isti-vclab/meshlab/pull/1349 is available
+        (pkgs.fetchpatch {
+          name = "meshlab-fix-crash-when-closing-project-window.patch";
+          url = "https://patch-diff.githubusercontent.com/raw/cnr-isti-vclab/meshlab/pull/1349.patch";
+          sha256 = "sha256-Ybg0DPwoVdzneHJeerrgekut53tPUj/VqoMBKPl2WoI=";
+        })
+        # TODO: Remove when https://github.com/Z3roCo0l/meshlab/commit/bcf2d6c201738c32f69afc347eb88d5a93218e7f is PR'd, merged, and available
+        (pkgs.fetchpatch {
+          name = "meshlab-Dialogbox-for-mainwindow-actions.patch";
+          url = "https://github.com/Z3roCo0l/meshlab/commit/bcf2d6c201738c32f69afc347eb88d5a93218e7f.patch";
+          sha256 = "sha256-oRBKQVq4fOmeD9OZFW3f7pXKkvuj41dJ0IyYaVSl0F0=";
+        })
+        (pkgs.fetchpatch {
+          name = "meshlab-Remove-dialogbox-from-new-project-function.patch";
+          url = "https://github.com/Z3roCo0l/meshlab/commit/d887778f09a1ff954f46c68a9c4c306556981440.patch";
+          sha256 = "sha256-rsIcZv8zB1it/RR+fYxQODPqqUjP3C2mdhzCTD8i3g8=";
+        })
+        (pkgs.fetchpatch {
+          name = "meshlab-Inverting-Selection-mode-CTRL-modifier.patch";
+          url = "https://github.com/Z3roCo0l/meshlab/commit/799975189feaa951344f89c24155d7f1f32906f1.patch";
+          sha256 = "sha256-FUPWiRgO+/f49w5TMbX3a7baAaz7wfYPm8Qp1CtIm+c=";
+        })
+      ];
+    }))
     moreutils
     mplayer
     mpv
