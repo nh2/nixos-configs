@@ -57,7 +57,12 @@ in
       <nixos-hardware/lenovo/thinkpad/t470s>
     ] ++ lib.optional (builtins.pathExists ./private-configuration.nix) ./private-configuration.nix;
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    permittedInsecurePackages = [
+      "openssl-1.1.1u" # Sublime Text 4 currently needs this, see https://github.com/sublimehq/sublime_text/issues/5984
+    ];
+  };
 
   nixpkgs.overlays = [
     (final: previous: {
@@ -544,15 +549,16 @@ in
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    config.pipewire = {
-      # Trying to fix crackling (more apparent when many audio sources are playing simultaneously):
-      # Does not seem to help :(
-      "context.properties" = {
-        "default.clock.quantum" = "2048";
-        "default.clock.min-quantum" = "1024";
-        "default.clock.max-quantum" = "4096";
-      };
-    };
+    # The below was configurable via NixOS options in the past but is no longer.
+    # If I want this, it should go into `/etc/pipewire/pipewire.conf.d/`:
+    #
+    #     # Trying to fix crackling (more apparent when many audio sources are playing simultaneously):
+    #     # Does not seem to help :(
+    #     "context.properties" = {
+    #       "default.clock.quantum" = "2048";
+    #       "default.clock.min-quantum" = "1024";
+    #       "default.clock.max-quantum" = "4096";
+    #     };
   };
 
   # Allow core dumps
