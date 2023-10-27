@@ -60,7 +60,7 @@ in
   nixpkgs.config = {
     allowUnfree = true;
     permittedInsecurePackages = [
-      "openssl-1.1.1u" # Sublime Text 4 currently needs this, see https://github.com/sublimehq/sublime_text/issues/5984
+      "openssl-1.1.1v" # Sublime Text 4 currently needs this, see https://github.com/sublimehq/sublime_text/issues/5984
     ];
   };
 
