@@ -776,6 +776,7 @@ in
 
     # Keybinding modifications
     source ${./zsh/keybindings-alt-left-right-word-jumping.zsh}
+    source ${./zsh/disable-home-end-history-jumping.zsh}
 
     # Add nix-shell indicator that makes clear when we're in nix-shell.
     # Set the prompt items to include it in addition to the defaults:
