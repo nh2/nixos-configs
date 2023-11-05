@@ -225,13 +225,13 @@ in
     fzf
     gajim
     gdb
+    gh
     gimp
     git
     # TODO: Replace by `delta` as soon as it's built on unstable
     gitAndTools.diff-so-fancy
     gitAndTools.git-absorb
     gitAndTools.git-branchless
-    gitAndTools.hub
     glade
     glxinfo
     gnome-themes-extra # Provides theme in the XFCE theme switcher
