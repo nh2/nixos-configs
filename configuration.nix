@@ -60,7 +60,8 @@ in
   nixpkgs.config = {
     allowUnfree = true;
     permittedInsecurePackages = [
-      "openssl-1.1.1v" # Sublime Text 4 currently needs this, see https://github.com/sublimehq/sublime_text/issues/5984
+      "openssl-1.1.1w" # Sublime Text 4 currently needs this, see https://github.com/sublimehq/sublime_text/issues/5984
+      "electron-24.8.6" # TODO: Remove once `bitwarden` has updated its electron dependency
     ];
   };
 
