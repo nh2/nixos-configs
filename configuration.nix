@@ -189,6 +189,17 @@ in
 
   services.teamviewer.enable = true;
 
+  environment.sessionVariables = {
+    # Necessary for e.g. `i3` config `exec` commands to use `gsettings`,
+    # e.g. to bind keys for switching light/dark mode.
+    # See: https://github.com/NixOS/nixpkgs/issues/273275
+    XDG_DATA_DIRS =
+      let
+        schema = pkgs.gsettings-desktop-schemas;
+        datadir = "${schema}/share/gsettings-schemas/${schema.name}";
+      in [ datadir ];
+  };
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
