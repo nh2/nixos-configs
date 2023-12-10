@@ -304,7 +304,7 @@ in
     netcat-openbsd
     nix-diff
     nix-index
-    nix-review
+    nixpkgs-review
     nload
     nmap
     ntfy
@@ -372,7 +372,7 @@ in
     zoom-us
 
     apcupsd
-    rustc cargo binutils gcc pkgconfig # Rust development (from https://nixos.org/nixpkgs/manual/#rust)
+    rustc cargo binutils gcc pkg-config # Rust development (from https://nixos.org/nixpkgs/manual/#rust)
     cmake freetype # for Alacritty rust development
 
     audacity
@@ -822,7 +822,7 @@ in
   # locate
   services.locate = {
     enable = true;
-    locate = pkgs.mlocate;
+    package = pkgs.mlocate;
     localuser = null; # required for mlocate, see https://github.com/NixOS/nixpkgs-channels/blob/42674051d12540d4a996504990c6ea3619505953/nixos/modules/misc/locate.nix#L130
   };
 
