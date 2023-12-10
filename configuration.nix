@@ -575,6 +575,8 @@ in
   # Install debug symbols for all packages that provide it.
   environment.enableDebugInfo = true;
 
+  hardware.sane.enable = true; # enables support for SANE scanners
+
   # Steam needs this, see https://nixos.org/nixpkgs/manual/#sec-steam-play
   hardware.opengl.driSupport32Bit = true;
   hardware.pulseaudio.support32Bit = true;
@@ -839,6 +841,8 @@ in
       "camera" # Enable `gphoto2` camera access.
       "libvirtd" # manage VMs
       "mlocate" # allow using `locate`
+      "scanner"
+      "lp" # scanners that are also a printer
     ];
     shell = pkgs.zsh;
   };
