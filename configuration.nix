@@ -576,7 +576,7 @@ in
   # Allow core dumps
   systemd.extraConfig = ''
     # core dump limit in KB
-    DefaultLimitCORE=1000000
+    DefaultLimitCORE=20000000
 
     # Note that systemd-coredump may still throw away coredumps if you have
     # < 15% disk free, see:
