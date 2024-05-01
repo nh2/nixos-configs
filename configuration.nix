@@ -278,6 +278,7 @@ in
     linuxPackages.perf
     lm_sensors
     lsof
+    lutris
     lz4
     lzop
     meld
@@ -308,6 +309,7 @@ in
       ];
     }))
     moreutils
+    mosh
     mplayer
     mpv
     ncdu
