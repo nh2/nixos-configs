@@ -35,15 +35,6 @@ let
   screenlockScriptName = "screenlock-script";
   screenlock-script = pkgs.writeScriptBin screenlockScriptName screenlockScriptText;
 
-  # From https://nixos.wiki/wiki/Nvidia#offload_mode
-  nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
-    export __NV_PRIME_RENDER_OFFLOAD=1
-    export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
-    export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    export __VK_LAYER_NV_optimus=NVIDIA_only
-    exec -a "$0" "$@"
-  '';
-
   # Needs a channel to be added via:
   #     sudo nix-channel --add https://nixos.org/channels/nixos-unstable unstable
   unstable = import <unstable> { config.allowUnfree = true; };
@@ -56,6 +47,20 @@ in
       #     sudo nix-channel --add https://github.com/NixOS/nixos-hardware/archive/master.tar.gz nixos-hardware
       <nixos-hardware/lenovo/thinkpad/t470s>
     ] ++ lib.optional (builtins.pathExists ./private-configuration.nix) ./private-configuration.nix;
+
+  options = with lib; {
+
+    gpuMode = mkOption {
+      type = types.enum [
+        "intel"
+        "nvidia"
+        "intel-nvidia-offload" # offload mode (NVIDIA only used with `nvidia-offload` wrapper script)
+        "intel-nvidia-sync" # # sync mode (both Intel and NVIDIA on all the time; resume-from-suspend gives black screen)
+      ];
+      default = "intel";
+      description = lib.mdDoc "Which GPU to use, and how.";
+      visible = false; # don't show in manual, to prevent rebuilding the manual
+    };
 
   };
 
@@ -441,8 +446,6 @@ in
 
       barrier
 
-      nvidia-offload
-
       virt-manager
 
       zbar # QR code reader
@@ -626,13 +629,32 @@ in
     # Enable touchpad support.
     services.xserver.libinput.enable = true;
 
-    # services.xserver.videoDrivers = if useWayland then [ "intel" ] else [ "nvidia" ];
-    services.xserver.videoDrivers = [ "intel" ];
+    specialisation."nvidia".configuration = {
+      gpuMode = "nvidia";
+    };
+    specialisation."intel-nvidia-offload".configuration = {
+      gpuMode = "intel-nvidia-offload";
+    };
+    specialisation."intel-nvidia-sync".configuration = {
+      gpuMode = "intel-nvidia-sync";
+    };
+
+    services.xserver.videoDrivers =  [
+      {
+        "intel" = "intel";
+        "nvidia" = "nvidia";
+        "intel-nvidia-offload" = "nvidia";
+        "intel-nvidia-sync" = "nvidia";
+      }.${config.gpuMode}
+    ];
     # See https://nixos.wiki/wiki/Nvidia#offload_mode
     # Disabled for VFIO for now
     hardware.nvidia.prime = lib.mkIf (!useWayland) {
-      offload.enable = true; # offload mode (NVIDIA only used with `nvidia-offload` wrapper script)
-      # sync.enable = true; # sync mode (both Intel and NVIDIA on all the time; resume-from-suspend gives black screen)
+      offload = lib.mkIf (config.gpuMode == "intel-nvidia-offload") {
+        enable = true;
+        enableOffloadCmd = true;
+      };
+      sync.enable = config.gpuMode == "intel-nvidia-sync";
 
       # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
       nvidiaBusId = "PCI:2:0:0";
@@ -642,6 +664,12 @@ in
     };
     hardware.nvidia.powerManagement.enable = true;
     hardware.nvidia.modesetting.enable = true;
+    hardware.nvidia.dynamicBoost.enable = {
+      "intel" = false;
+      "nvidia" = true;
+      "intel-nvidia-offload" = true;
+      "intel-nvidia-sync" = true;
+    }.${config.gpuMode};
 
     # Enable the KDE Desktop Environment.
     # services.xserver.displayManager.sddm.enable = true;
