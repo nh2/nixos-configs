@@ -573,7 +573,9 @@ in
     #     };
   };
 
-  # Allow core dumps
+  # Allow core dumps.
+  # Truncated core dumps are not very useful to GDB, see:
+  # * https://unix.stackexchange.com/questions/155389/can-anything-useful-be-done-with-a-truncated-core
   systemd.extraConfig = ''
     # core dump limit in KB
     DefaultLimitCORE=20000000
