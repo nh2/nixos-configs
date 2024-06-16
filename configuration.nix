@@ -298,12 +298,6 @@ in
         # hardeningDisable = [ "all" ];
 
         patches = (old.patches or []) ++ [
-          # TODO: Remove when https://github.com/cnr-isti-vclab/meshlab/pull/1349 is available
-          (pkgs.fetchpatch {
-            name = "meshlab-fix-crash-when-closing-project-window.patch";
-            url = "https://patch-diff.githubusercontent.com/raw/cnr-isti-vclab/meshlab/pull/1349.patch";
-            sha256 = "sha256-Ybg0DPwoVdzneHJeerrgekut53tPUj/VqoMBKPl2WoI=";
-          })
           # TODO: Remove when https://github.com/Z3roCo0l/meshlab/commit/bcf2d6c201738c32f69afc347eb88d5a93218e7f is PR'd, merged, and available
           (pkgs.fetchpatch {
             name = "meshlab-Dialogbox-for-mainwindow-actions.patch";
@@ -331,10 +325,12 @@ in
       netcat-openbsd
       nix-diff
       nix-index
+      nix-tree
       nixpkgs-review
       nload
       nmap
-      ntfy
+      nom
+      # ntfy
       openscad
       openssl
       paprefs
@@ -421,7 +417,6 @@ in
       slack
       libnotify # for `notify-send`
 
-      jetbrains.clion
       xdotool
       valgrind
       sqlite
@@ -533,7 +528,7 @@ in
 
     services.avahi = {
       enable = true;
-      nssmdns = true; # allows pinging *.local from this machine
+      nssmdns4 = true; # allows pinging *.local from this machine
       publish = { # allows other machines to see this one
         enable = true;
         addresses = true;
@@ -641,7 +636,7 @@ in
     # the normal XKB dir, and copying our keymap in.
     # TODO: This might stop working in the future:
     #       https://github.com/NixOS/nixpkgs/pull/138207#issuecomment-972442368
-    services.xserver.xkbDir = pkgs.runCommand "custom-keyboard-layout-xkb-dir" {} ''
+    services.xserver.xkb.dir = pkgs.runCommand "custom-keyboard-layout-xkb-dir" {} ''
       cp -r --symbolic-link "${pkgs.xkeyboard_config}/share/X11/xkb" "$out"
       chmod -R u+w "$out"
 
@@ -650,11 +645,11 @@ in
       mkdir -p "$out/symbols"
       cp ${./xkb/symbols}/* "$out/symbols"
     '';
-    services.xserver.layout = "gb-CapsLockIsHyperL";
+    services.xserver.xkb.layout = "gb-CapsLockIsHyperL";
     # services.xserver.xkbOptions = "eurosign:e";
 
     # Enable touchpad support.
-    services.xserver.libinput.enable = true;
+    services.libinput.enable = true;
 
     specialisation."nvidia".configuration = {
       gpuMode = "nvidia";
@@ -731,7 +726,7 @@ in
         enableXfwm = false;
       };
     };
-    services.xserver.displayManager.defaultSession = "xfce+i3";
+    services.displayManager.defaultSession = "xfce+i3";
     services.xserver.windowManager.i3 = {
       enable = true;
       extraPackages = with pkgs; [
