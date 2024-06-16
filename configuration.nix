@@ -292,6 +292,11 @@ in
       lzop
       meld
       (meshlab.overrideAttrs (old: {
+        # For debugging crashes
+        # cmakeBuildType = "RelWithDebInfo";
+        # dontStrip = true;
+        # hardeningDisable = [ "all" ];
+
         patches = (old.patches or []) ++ [
           # TODO: Remove when https://github.com/cnr-isti-vclab/meshlab/pull/1349 is available
           (pkgs.fetchpatch {
