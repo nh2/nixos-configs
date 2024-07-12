@@ -407,7 +407,7 @@ in
 
       # TODO Answer https://discourse.nixos.org/t/gst-all-1-gstreamer-packages-does-not-install-gst-launch-1-0-etc/5369
       gst_all_1.gstreamer.dev
-      youtube-dl
+      yt-dlp
 
       gparted
       ntfs3g # for mounting NTFS USB drives
