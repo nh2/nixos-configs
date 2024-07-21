@@ -234,7 +234,7 @@ in
       cryptsetup
       custom-keyboard-layout
       screenlock-script
-      diffoscope
+      # diffoscope # Re-enable when https://github.com/NixOS/nixpkgs/issues/328350 is fixed
       ethtool
       exfat
       ffmpeg
