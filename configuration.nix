@@ -27,6 +27,13 @@ let
 
   screenlockScriptText = lib.concatStrings [
     # Make `xsecurelock` happen on `xflock4`, `loginctl lock-session`, and suspend/hibernate.
+    # Note that when we use `xss-lock` this way, the setting
+    #     [ ] Lock screen when system is going to sleep
+    # needs to be disabled in xfce4-power-manager's settings,
+    # because otherwise `xsecurelock` is double-invoked,
+    # which prevents suspend from happening on low battery,
+    # requiring unlocking the first lockscreen before the second one
+    # immediately appears and the system goes to sleep.
     ''
       xfconf-query --channel xfce4-session --create --property /general/LockCommand --set '${pkgs.xsecurelock}/bin/xsecurelock' --type string
       ${pkgs.xss-lock}/bin/xss-lock --transfer-sleep-lock -- ${pkgs.xsecurelock}/bin/xsecurelock &
