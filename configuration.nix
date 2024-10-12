@@ -660,12 +660,15 @@ in
     services.libinput.enable = true;
 
     specialisation."nvidia".configuration = {
+      system.nixos.tags = [ "nvidia" ];
       gpuMode = "nvidia";
     };
     specialisation."intel-nvidia-offload".configuration = {
+      system.nixos.tags = [ "intal-nvidia-offload" ];
       gpuMode = "intel-nvidia-offload";
     };
     specialisation."intel-nvidia-sync".configuration = {
+      system.nixos.tags = [ "intal-nvidia-sync" ];
       gpuMode = "intel-nvidia-sync";
     };
 
