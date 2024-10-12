@@ -221,6 +221,7 @@ in
     environment.systemPackages = with pkgs; [
       awscli2 # official `aws` CLI program
       autossh
+      b3sum
       cura
       eternal-terminal
       mumble # need at least 1.3.4 to avoid package loss
