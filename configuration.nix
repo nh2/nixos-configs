@@ -664,11 +664,11 @@ in
       gpuMode = "nvidia";
     };
     specialisation."intel-nvidia-offload".configuration = {
-      system.nixos.tags = [ "intal-nvidia-offload" ];
+      system.nixos.tags = [ "intel-nvidia-offload" ];
       gpuMode = "intel-nvidia-offload";
     };
     specialisation."intel-nvidia-sync".configuration = {
-      system.nixos.tags = [ "intal-nvidia-sync" ];
+      system.nixos.tags = [ "intel-nvidia-sync" ];
       gpuMode = "intel-nvidia-sync";
     };
 
