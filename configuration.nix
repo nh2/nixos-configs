@@ -341,6 +341,7 @@ in
       # ntfy
       openscad
       openssl
+      p7zip
       paprefs
       parted
       (pass.withExtensions (exts: [ exts.pass-otp ]))
@@ -526,6 +527,7 @@ in
         5201 # iperf3
       ];
       allowedUDPPorts = [
+        69 # tftp
         5201 # iperf3
       ];
       # Or disable the firewall altogether.
