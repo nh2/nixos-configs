@@ -709,7 +709,7 @@ in
 
     services.xserver.videoDrivers =  [
       {
-        "intel" = "intel";
+        "intel" = "modesetting";
         "nvidia" = "nvidia";
         "intel-nvidia-offload" = "nvidia";
         "intel-nvidia-sync" = "nvidia";
