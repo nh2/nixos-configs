@@ -45,6 +45,34 @@ let
   # Needs a channel to be added via:
   #     sudo nix-channel --add https://nixos.org/channels/nixos-unstable unstable
   unstable = import <unstable> { config.allowUnfree = true; };
+
+  # Adapted from https://github.com/NixOS/nixpkgs/issues/186570#issuecomment-1627797219
+  # cura-appimage =
+  #   let
+  #     cura5 = pkgs.appimageTools.wrapType2 rec {
+  #       name = "cura5";
+  #       version = "5.9.0";
+  #       src = fetchurl {
+  #         url = "https://github.com/Ultimaker/Cura/releases/download/${version}/UltiMaker-Cura-${version}-linux-X64.AppImage";
+  #         hash = "sha256-STtVeM4Zs+PVSRO3cI0LxnjRDhOxSlttZF+2RIXnAp4=";
+  #       };
+  #       extraPkgs = pkgs: with pkgs; [ ];
+  #     };
+  #   in
+  #     writeScriptBin "cura" ''
+  #       #! ${pkgs.bash}/bin/bash
+  #       # AppImage version of Cura loses current working directory and treats all paths relateive to $HOME.
+  #       # So we convert each of the files passed as argument to an absolute path.
+  #       # This fixes use cases like `cd /path/to/my/files; cura mymodel.stl anothermodel.stl`.
+  #       args=()
+  #       for a in "$@"; do
+  #         if [ -e "$a" ]; then
+  #           a="$(realpath "$a")"
+  #         fi
+  #         args+=("$a")
+  #       done
+  #       exec "${cura5}/bin/cura5" "''${args[@]}"
+  #     '';
 in
 {
   imports =
@@ -222,7 +250,8 @@ in
       awscli2 # official `aws` CLI program
       autossh
       b3sum
-      cura
+      # cura # TODO: dependency `libarcus` is marked broken in nixpkgs
+      cura-appimage
       eternal-terminal
       mumble # need at least 1.3.4 to avoid package loss
       (lib.hiPrio pkgs.parallel) # to take precedence over `parallel` from `moreutils`
@@ -235,18 +264,21 @@ in
       bind.dnsutils # for `dig` etc.
       binutils # objdump, nm, readelf etc
       blender
-      bless
       calibre
+      cheese
       chromium
       cloudcompare
       cryptsetup
       custom-keyboard-layout
       screenlock-script
       # diffoscope # Re-enable when https://github.com/NixOS/nixpkgs/issues/328350 is fixed
+      eog
       ethtool
+      evince
       exfat
       ffmpeg
       file
+      file-roller
       #(if useWayland then firefox-wayland else firefox)
       firefox
       fractal
@@ -262,17 +294,11 @@ in
       gitAndTools.git-branchless
       glade
       glxinfo
+      gnome-connections
+      gnome-screenshot
+      gnome-system-monitor
+      gnome-terminal
       gnome-themes-extra # Provides theme in the XFCE theme switcher
-      gnome3.cheese
-      gnome3.eog
-      gnome3.evince
-      gnome3.file-roller
-      gnome3.gnome-screenshot
-      gnome3.gnome-system-monitor
-      gnome3.gnome-terminal
-      gnome3.nautilus # xfce's `thunar` freezes the UI during large MTP transfers, nautilus doesn't
-      gnome3.totem
-      gnome3.vinagre
       gnumake
       gnupg
       gptfdisk
@@ -328,6 +354,7 @@ in
       mosh
       mplayer
       mpv
+      nautilus # xfce's `thunar` freezes the UI during large MTP transfers, nautilus doesn't
       ncdu
       nebula
       netcat-openbsd
@@ -364,6 +391,7 @@ in
       rxvt-unicode
       screen
       screen-message
+      scrot
       shellcheck
       signal-desktop
       skypeforlinux
@@ -376,19 +404,24 @@ in
       # sublime-merge
       sysdig
       sysstat
+      tesseract
       tcpdump
       texmacs
       thunderbird
+      totem
       traceroute
       unzip
       usbutils # for lsusb
       v4l-utils
       veracrypt
+      veroroute
       vlc
+      vokoscreen-ng
       wget
       wirelesstools # iwconfig/iwgetid for wifi info
       wireshark
       x11vnc
+      xclip
       xorg.xhost
       xorg.xev
       xorg.xkbcomp
@@ -605,7 +638,7 @@ in
     '';
 
     # Install debug symbols for all packages that provide it.
-    environment.enableDebugInfo = true;
+    #environment.enableDebugInfo = true;
 
     hardware.sane.enable = true; # enables support for SANE scanners
     hardware.sane.backends-package = pkgs.sane-backends.overrideAttrs (old: {
@@ -632,9 +665,9 @@ in
     });
 
     # Steam needs this, see https://nixos.org/nixpkgs/manual/#sec-steam-play
-    hardware.opengl.driSupport32Bit = true;
     hardware.pulseaudio.support32Bit = true;
-    hardware.opengl.extraPackages = with pkgs; [
+    hardware.graphics.enable32Bit = true;
+    hardware.graphics.extraPackages = with pkgs; [
       # Work around "A game file appears to be missing or corrupted" in Steam.
       # See https://www.reddit.com/r/DotA2/comments/e24l6q/a_game_file_appears_to_be_missing_or_corrupted/
       #libva
@@ -682,6 +715,7 @@ in
         "intel-nvidia-sync" = "nvidia";
       }.${config.gpuMode}
     ];
+    hardware.nvidia.open = false; # The 940MX is too old for the open module.
     # See https://nixos.wiki/wiki/Nvidia#offload_mode
     # Disabled for VFIO for now
     hardware.nvidia.prime = lib.mkIf (!useWayland) {
