@@ -93,7 +93,7 @@ in
         "intel-nvidia-sync" # # sync mode (both Intel and NVIDIA on all the time; resume-from-suspend gives black screen)
       ];
       default = "intel";
-      description = lib.mdDoc "Which GPU to use, and how.";
+      description = "Which GPU to use, and how.";
       visible = false; # don't show in manual, to prevent rebuilding the manual
     };
 
