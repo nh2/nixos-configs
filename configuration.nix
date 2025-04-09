@@ -428,6 +428,7 @@ in
       xorg.xkill
       xorg.xwininfo
       xournal
+      xournalpp
       xsecurelock
       xss-lock
       yubikey-personalization
