@@ -360,6 +360,7 @@ in
       netcat-openbsd
       nix-diff
       nix-index
+      nix-output-monitor
       nix-tree
       nixpkgs-review
       nload
