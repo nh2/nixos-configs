@@ -394,7 +394,6 @@ in
       scrot
       shellcheck
       signal-desktop
-      skypeforlinux
       smartmontools
       smem
       sshfs-fuse
