@@ -427,7 +427,6 @@ in
       xorg.xkbcomp
       xorg.xkill
       xorg.xwininfo
-      xournal
       xournalpp
       xsecurelock
       xss-lock
@@ -479,8 +478,6 @@ in
       inotify-tools # for inotifywait etc.
 
       # ripcord
-
-      luminanceHDR
 
       nix-top
 
@@ -594,14 +591,14 @@ in
     # Disabled in order to use PipeWire, as recommended on https://nixos.wiki/wiki/PipeWire
     # # Enable sound.
     # sound.enable = true;
-    # hardware.pulseaudio.enable = true;
+    # services.pulseaudio.enable = true;
     # # Network sink streaming support
-    # hardware.pulseaudio.tcp.enable = true;
+    # services.pulseaudio.tcp.enable = true;
     # # Note: As of writing (20.03), enabling zeroconf adds an `avahi` dep to the
     # #       pulseaudio dep so it will be compiled, not fetched from cache.
-    # # hardware.pulseaudio.zeroconf.discovery.enable = true;
+    # # services.pulseaudio.zeroconf.discovery.enable = true;
     # # TODO: disable
-    # # hardware.pulseaudio.zeroconf.publish.enable = true;
+    # # services.pulseaudio.zeroconf.publish.enable = true;
 
     # Bluetooth
     hardware.bluetooth.enable = true;
@@ -666,7 +663,7 @@ in
     });
 
     # Steam needs this, see https://nixos.org/nixpkgs/manual/#sec-steam-play
-    hardware.pulseaudio.support32Bit = true;
+    services.pulseaudio.support32Bit = true;
     hardware.graphics.enable32Bit = true;
     hardware.graphics.extraPackages = with pkgs; [
       # Work around "A game file appears to be missing or corrupted" in Steam.
@@ -940,7 +937,6 @@ in
     services.locate = {
       enable = true;
       package = pkgs.mlocate;
-      localuser = null; # required for mlocate, see https://github.com/NixOS/nixpkgs-channels/blob/42674051d12540d4a996504990c6ea3619505953/nixos/modules/misc/locate.nix#L130
     };
 
     # Android adb
