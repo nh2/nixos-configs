@@ -835,6 +835,9 @@ in
     # See https://github.com/NixOS/nixpkgs/issues/83504
     systemd.services.earlyoom.serviceConfig.ExecStart = lib.mkForce "${pkgs.earlyoom}/bin/earlyoom -m 5 -s 100,100";
 
+    # Testing this scheduler to see how it affects desktop responsiveness.
+    services.system76-scheduler.enable = true;
+
     # zsh
     programs.zsh.enable = true;
     programs.zsh.interactiveShellInit = ''
