@@ -705,14 +705,16 @@ in
       gpuMode = "intel-nvidia-sync";
     };
 
-    services.xserver.videoDrivers =  [
-      {
-        "intel" = "modesetting";
-        "nvidia" = "nvidia";
-        "intel-nvidia-offload" = "nvidia";
-        "intel-nvidia-sync" = "nvidia";
-      }.${config.gpuMode}
-    ];
+    services.xserver.videoDrivers = {
+      "intel" = [ "modesetting" ];
+      "nvidia" = [ "nvidia" ];
+      # For offloading, `modesetting` is needed additionally,
+      # otherwise the X-server will be running permanently on nvidia,
+      # thus keeping the GPU always on (see `nvidia-smi`).
+      # See https://discourse.nixos.org/t/how-to-use-nvidia-prime-offload-to-run-the-x-server-on-the-integrated-board/9091/31
+      "intel-nvidia-offload" = [ "modesetting" "nvidia" ];
+      "intel-nvidia-sync" = [ "nvidia" ];
+    }.${config.gpuMode};
     hardware.nvidia.open = false; # The 940MX is too old for the open module.
     # See https://nixos.wiki/wiki/Nvidia#offload_mode
     # Disabled for VFIO for now
