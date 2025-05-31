@@ -231,7 +231,7 @@ in
     # Set your time zone.
     time.timeZone = "Europe/Berlin";
 
-    services.teamviewer.enable = true;
+    # services.teamviewer.enable = true;
 
     environment.sessionVariables = {
       # Necessary for e.g. `i3` config `exec` commands to use `gsettings`,
