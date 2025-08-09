@@ -823,17 +823,9 @@ in
       # freeMemThreshold = 5; # percent
       freeMemThreshold = 10; # using a bit more because even https://github.com/rfjakob/earlyoom/pull/191 under-computes the amount of memory ZFS needs
       # See note below
-      # freeSwapThreshold = 100; # percent
+      freeSwapThreshold = 100; # percent
+      freeSwapKillThreshold = 100; # see https://github.com/NixOS/nixpkgs/issues/83504
     };
-    # earlyoom now accepts `-m/s PERCENT[,KILL_PERCENT]` with a comma,
-    # but NixOS does not allow us to configure the behind-the-comma part,
-    # so we manually override the `ExecStart` line.
-    # We need `-s 100,100`, because by default the behind-the-comma part
-    # is half of the before-the-comma part, so even if you set `freeSwapThreshold = 100`,
-    # it will translate to `-s 100,50`, so earlyoom would only start killing
-    # after 50% of the swap is full, which can take forever to happen.
-    # See https://github.com/NixOS/nixpkgs/issues/83504
-    systemd.services.earlyoom.serviceConfig.ExecStart = lib.mkForce "${pkgs.earlyoom}/bin/earlyoom -m 5 -s 100,100";
 
     # Testing this scheduler to see how it affects desktop responsiveness.
     services.system76-scheduler.enable = true;
