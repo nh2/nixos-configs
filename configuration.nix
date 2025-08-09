@@ -1067,6 +1067,6 @@ in
     #     steam-run ~/.steam/steam/steamapps/common/dota\ 2\ beta/game/bin/linuxsteamrt64/dota2
     # Otherwise they hang with a library error on startup.
     programs.steam.enable = true;
-  };
 
+  };
 }
