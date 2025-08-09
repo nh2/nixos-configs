@@ -400,7 +400,7 @@ in
       sshfs-fuse
       stack
       stress-ng
-      sublime4
+      unstable.sublime4
       # sublime-merge
       sysdig
       sysstat
