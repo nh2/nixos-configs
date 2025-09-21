@@ -44,7 +44,14 @@ let
 
   # Needs a channel to be added via:
   #     sudo nix-channel --add https://nixos.org/channels/nixos-unstable unstable
-  unstable = import <unstable> { config.allowUnfree = true; };
+  unstable = import <unstable> {
+    config = {
+      allowUnfree = true;
+      permittedInsecurePackages = [
+        "openssl-1.1.1w" # for sublime4 from `unstable`
+      ];
+    };
+  };
 
   # Adapted from https://github.com/NixOS/nixpkgs/issues/186570#issuecomment-1627797219
   # cura-appimage =
