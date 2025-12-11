@@ -645,7 +645,8 @@ in
     #environment.enableDebugInfo = true;
 
     hardware.sane.enable = true; # enables support for SANE scanners
-    hardware.sane.backends-package = pkgs.sane-backends.overrideAttrs (old: {
+    # Override disabled because of this claim that the problem is fixed; need to validate when I have the scanner: https://github.com/NixOS/nixpkgs/pull/328459#issuecomment-2244359050
+    hardware.sane.backends-package = lib.mkIf false (pkgs.sane-backends.overrideAttrs (old: {
       configureFlags = (old.configureFlags or []) ++ [
         # "--localstatedir=/var" # `sane-backends` puts e.g. lock files in here, must not be in /nix/store
         # "--with-lockdir=/var/lock/sane" # `sane-backends` puts e.g. lock files in here, must not be in /nix/store
@@ -666,7 +667,7 @@ in
       #     sudo mkdir -p /var/lock/sane && sudo chown root:scanner /var/lock/sane && sudo chmod g+w /var/lock/sane
       # Maybe we should use the `scanner` group for that, and/or configure it with systemd `tmpfiles`.
       #NIX_CFLAGS_COMPILE = "-DPATH_SANE_LOCK_DIR=/var/lock/sane";
-    });
+    }));
 
     # Steam needs this, see https://nixos.org/nixpkgs/manual/#sec-steam-play
     services.pulseaudio.support32Bit = true;
