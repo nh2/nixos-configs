@@ -421,7 +421,6 @@ in
       usbutils # for lsusb
       v4l-utils
       veracrypt
-      veroroute
       vlc
       vokoscreen-ng
       wget
