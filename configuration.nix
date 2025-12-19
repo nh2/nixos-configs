@@ -48,7 +48,6 @@ let
     config = {
       allowUnfree = true;
       permittedInsecurePackages = [
-        "openssl-1.1.1w" # for sublime4 from `unstable`
       ];
     };
   };
@@ -296,11 +295,11 @@ in
       gimp
       git
       # TODO: Replace by `delta` as soon as it's built on unstable
-      gitAndTools.diff-so-fancy
-      gitAndTools.git-absorb
-      gitAndTools.git-branchless
+      diff-so-fancy
+      git-absorb
+      git-branchless
       glade
-      glxinfo
+      mesa-demos # glxinfo
       gnome-connections
       gnome-screenshot
       gnome-system-monitor
@@ -325,7 +324,7 @@ in
       libarchive # bsdtar
       libcap_ng
       libreoffice
-      linuxPackages.perf
+      perf
       lm_sensors
       lsof
       lutris
@@ -407,7 +406,7 @@ in
       sshfs-fuse
       stack
       stress-ng
-      unstable.sublime4
+      sublime4
       # sublime-merge
       sysdig
       sysstat
@@ -438,7 +437,7 @@ in
       xsecurelock
       xss-lock
       yubikey-personalization
-      yubikey-personalization-gui
+      yubioath-flutter
       yubikey-manager # for `ykman`, e.g. to set the touch requirement for PGP
       zip
       zoom-us
@@ -491,7 +490,7 @@ in
       python3Packages.grip
       bup
 
-      barrier
+      deskflow # replacement for synergy/barrier/input-leap
 
       virt-manager
 
@@ -501,7 +500,7 @@ in
       # TODO: Cannot currently use the following, it breaks the Backspace and
       #       Delete keys, see https://github.com/LnL7/vim-nix/issues/38.
       # From https://nixos.wiki/wiki/Editor_Modes_for_Nix_Files#vim-nix
-      (pkgs.vim_configurable.customize {
+      (pkgs.vim-full.customize {
         name = "vim";
         vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
           # start = [ vim-nix ]; # load plugin on startup
@@ -513,7 +512,7 @@ in
 
       turbovnc
 
-      bitwarden
+      bitwarden-desktop
 
       bupstash
 
@@ -523,7 +522,7 @@ in
       # and Calibri to render my Calibri-written Word docs correctly.
       # Arial is also required to be put there so that the default templates
       # look as expected.
-      onlyoffice-bin
+      onlyoffice-desktopeditors
 
       config.boot.kernelPackages.nvidia_x11
 
@@ -616,7 +615,7 @@ in
     services.pipewire = {
       enable = true;
       alsa.enable = true;
-      alsa.support32Bit = true;
+      # alsa.support32Bit = true; # probably no longer needed
       pulse.enable = true;
       # The below was configurable via NixOS options in the past but is no longer.
       # If I want this, it should go into `/etc/pipewire/pipewire.conf.d/`:
@@ -633,14 +632,14 @@ in
     # Allow core dumps.
     # Truncated core dumps are not very useful to GDB, see:
     # * https://unix.stackexchange.com/questions/155389/can-anything-useful-be-done-with-a-truncated-core
-    systemd.extraConfig = ''
+    systemd.settings.Manager = {
       # core dump limit in KB
-      DefaultLimitCORE=20000000
+      DefaultLimitCORE = 20000000;
 
       # Note that systemd-coredump may still throw away coredumps if you have
       # < 15% disk free, see:
       # https://unix.stackexchange.com/questions/554442/coredumpctl-cannot-read-core-dump-gives-message-file-is-not-readable-or-no-su/554460#554460
-    '';
+    };
 
     # Install debug symbols for all packages that provide it.
     #environment.enableDebugInfo = true;
@@ -670,15 +669,6 @@ in
       #NIX_CFLAGS_COMPILE = "-DPATH_SANE_LOCK_DIR=/var/lock/sane";
     }));
 
-    # Steam needs this, see https://nixos.org/nixpkgs/manual/#sec-steam-play
-    services.pulseaudio.support32Bit = true;
-    hardware.graphics.enable32Bit = true;
-    hardware.graphics.extraPackages = with pkgs; [
-      # Work around "A game file appears to be missing or corrupted" in Steam.
-      # See https://www.reddit.com/r/DotA2/comments/e24l6q/a_game_file_appears_to_be_missing_or_corrupted/
-      #libva
-    ];
-
     # Enable the X11 windowing system.
     services.xserver.enable = !useWayland;
     # Produce XKB dir containing custom keyboard layout by symlink-copying
@@ -686,7 +676,7 @@ in
     # TODO: This might stop working in the future:
     #       https://github.com/NixOS/nixpkgs/pull/138207#issuecomment-972442368
     services.xserver.xkb.dir = pkgs.runCommand "custom-keyboard-layout-xkb-dir" {} ''
-      cp -r --symbolic-link "${pkgs.xkeyboard_config}/share/X11/xkb" "$out"
+      cp -r --dereference "${pkgs.xkeyboard_config}/share/X11/xkb" "$out"
       chmod -R u+w "$out"
 
       mkdir -p "$out/keymap"
@@ -971,7 +961,6 @@ in
 
     virtualisation.libvirtd = {
       enable = true;
-      qemu.ovmf.enable = true;
       qemu.runAsRoot = false;
       onBoot = "ignore";
       onShutdown = "shutdown";
