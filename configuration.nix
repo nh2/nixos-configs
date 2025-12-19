@@ -434,6 +434,7 @@ in
       xorg.xkill
       xorg.xwininfo
       xournalpp
+      xpra
       xsecurelock
       xss-lock
       yubikey-personalization
