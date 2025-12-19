@@ -836,7 +836,8 @@ in
     };
 
     # Testing this scheduler to see how it affects desktop responsiveness.
-    services.system76-scheduler.enable = true;
+    #services.system76-scheduler.enable = true;
+    # Disabled for now to check if it fixes the occasional load spikes up to 50.0
 
     # zsh
     programs.zsh.enable = true;
