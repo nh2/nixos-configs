@@ -134,6 +134,19 @@ in
           separateDebugInfo = true;
         });
 
+        # nm-applet: prevent menu refresh while user is hovering over it
+        # Fixes https://gitlab.gnome.org/GNOME/network-manager-applet/-/issues/160
+        # From: https://gitlab.gnome.org/GNOME/network-manager-applet/-/merge_requests/169
+        networkmanagerapplet = previous.networkmanagerapplet.overrideAttrs (oldAttrs: {
+          patches = (oldAttrs.patches or []) ++ [
+            (final.fetchpatch {
+              name = "applet-prevent-menu-refresh-while-user-is-hovering-over-it.patch";
+              url = "https://gitlab.gnome.org/GNOME/network-manager-applet/-/commit/6c6e9ab4392a884bc74510858a416f88c3f0ce1c.patch";
+              hash = "sha256-zgBMaGBzre1hMyKWCF0A+tr4LbDx1MoKPmXi40JdGNo=";
+            })
+          ];
+        });
+
       })
     ];
 
