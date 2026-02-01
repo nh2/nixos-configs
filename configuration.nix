@@ -827,6 +827,10 @@ in
       ];
     };
 
+    fonts.packages = with pkgs; [
+      noto-fonts-cjk-sans # fixes e.g. Chinese characters being invisible in chromium
+    ];
+
     # earlyoom; I have swap enabled for hibernation, so any swapping
     # causes irrecoverable GUI freezes. earlyoom makes them short.
     services.earlyoom = {
