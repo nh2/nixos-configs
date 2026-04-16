@@ -328,6 +328,7 @@ in
       inkscape
       iotop
       iperf3
+      iw
       jq
       keybase
       keybase-gui
